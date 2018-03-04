@@ -1,0 +1,36 @@
+{
+  "type": "object",
+  "patternProperties": {
+    ".*": {
+      "type": "object",
+      "properties": {
+        "type": {"type": "string"},
+        "constraints": {"type": "object"},
+        "variables": {
+          "type": "object",
+          "patternProperties": {
+            "r[1-6]": {"type": "string"}
+          }
+        },
+        "comment": {"type": "string"},
+        "mappings": {
+          "type": "object",
+          "patternProperties": {
+            ".*": {"type": "string"}
+          }
+        },
+        "patterns": {
+          "type": "object",
+          "patternProperties": {
+            ".*": {"type": "string"}
+          }
+        },
+        "lower": {"type": "boolean"},
+        "label": {"type": "string"},
+        "description": {"type": "string"}
+      }
+    },
+    "required": ["type", "description", "variables"]
+  },
+  "additionalProperties": false
+}

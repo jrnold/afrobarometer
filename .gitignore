@@ -1,0 +1,9 @@
+.Rhistory
+.Rproj.user
+
+# external data
+/data-raw/external
+/data/
+
+# passwords
+afrobarometer.yml

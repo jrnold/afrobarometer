@@ -1,0 +1,19 @@
+Package: afrobarometer
+Version: 0.0.1
+Title: Dependencies for Merging Afrobarometer Data
+Description: A dependency only package for cleaning and merging 
+  Afrobarometer survery rounds.
+Authors@R: person("Jeffrey", "Arnold", role = c("aut", "cre"),
+                  email = "jeffrey.arnold@gmail.com")
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+ByteCompile: true
+Depends: R (>= 3.4)
+Imports:
+  here,
+  httr,
+  rlang,
+  tidyverse,
+  yaml
+RoxygenNote: 6.0.1
