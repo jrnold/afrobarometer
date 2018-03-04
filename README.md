@@ -1,7 +1,8 @@
 # Merged Afrobarometer Data
 
 This repository contains some R scripts that clean and merge data from 
-[Afrobarometer] surveys 
+[Afrobarometer] surveys. Currently this includes only rounds 3--6 and 
+the variables that I have used in my work.
 
 ## Build
 
@@ -19,9 +20,9 @@ This repository contains some R scripts that clean and merge data from
     devtools::install(".")
     ```
 
-3. Run or source the script `build.R` to bui
+3. Run or source the script `build.R` to build the merged data.
     ```console
-    Rscript 
+    Rscript build.R
     ```
 
 ## Usage
