@@ -72,17 +72,17 @@ default_clean <- function(x) {
                      "Don't know") %>%
        str_replace(regex("^refused( to answer)?$", ignore_case = TRUE),
                          "Refused") %>%
-       str_replace(regex("^don[']t know/haven[']t heard enough to say$",
+       str_replace(regex("^don[']t know ?/ ?haven[']t heard enough( to say)?$",
                          ignore_case = TRUE),
-                   "Don't know / haven't heard enough to say") %>%
+                   "Don't know") %>%
        str_replace(regex("^don[']t know ?/ ?did not understand the question$",
                          ignore_case = TRUE),
-                   "Don't know / did not understand the question") %>%
+                   "Don't know") %>%
        str_replace(regex("^no further (answer|reply)$", ignore_case = TRUE),
                    "No further answer") %>%
-       str_replace(regex("^not applicable$", ignore_case = TRUE),
+       str_replace(regex("^(not applicable|NA |N / A).*$", ignore_case = TRUE),
                    "Not applicable") %>%
-       str_replace(regex("^not asked in.*country$", ignore_case = TRUE),
+       str_replace(regex("^not asked in .*$", ignore_case = TRUE),
                    "Not asked in country") %>%
        str_replace(regex("^missing( data)?$", ignore_case = TRUE),
                    "Missing")
@@ -148,7 +148,7 @@ clean_afrobarometer <- function(.round) {
         lvls <- varinfo[["constraints"]][["enum"]]
         badlvls <- base::setdiff(unique(na.omit(out[[i]])), lvls)
         if (length(badlvls)) {
-          stop("Invalid levels of ", i, "found: ",
+          stop("Invalid levels of ", i, " found: ",
                str_c(sQuote(badlvls), collapse = ", "), "\n", call. = FALSE)
         }
         # ordered means what it says
