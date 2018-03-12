@@ -4,9 +4,13 @@
 #' ---
 #'
 #' Download raw data from Afrobarometer and WALS datasets
-library("tidyverse")
-library("yaml")
-library("httr")
+suppressPackageStartupMessages({
+  library("tidyverse")
+  library("yaml")
+  library("httr")
+})
+
+
 
 #'
 #' ## Afrobarometer
@@ -16,6 +20,7 @@ library("httr")
 
 AFROBAROMETER_DIR <- here::here("data-raw", "external", "afrobarometer")
 
+# nolint start
 AFROBAROMETER_URLS <- list(
   "r1" = "https://afrobarometer.org/sites/default/files/data/round-1/merged_r1_data.sav",
   "r2" = "https://afrobarometer.org/sites/default/files/data/round-2/merged_r2_data.sav",
@@ -33,6 +38,7 @@ CODEBOOK_URLS <- list(
   "r5" = "http://afrobarometer.org/sites/default/files/data/round-5/merged_r5_codebook_2.pdf",
   "r6" = "http://afrobarometer.org/sites/default/files/data/round-6/merged_round_6_codebook_20161.pdf"
 )
+# nolint end
 
 
 download_afrobarometer_file <- function(src, dst, authentication) {
@@ -76,4 +82,3 @@ AFROBAROMETER_URLS %>%
 CODEBOOK_URLS %>%
   walk(download_afrobarometer_file, dst = AFROBAROMETER_DIR,
        authentication)
-

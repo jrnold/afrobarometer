@@ -5,11 +5,18 @@
 #' Cleans and concatenates multiple rounds of Afrobarometer data and
 #' outputs to an `.rds` file.
 #'
-library("tidyverse")
+suppressPackageStartupMessages({
+  library("tidyverse")
+  library("glue")
+  library("stringr")
+})
+
 
 OUTDIR <- here::here("data")
 OUTFILE <- file.path(OUTDIR, "afrobarometer.rds")
 AFROBAROMETER_ROUNDS <- 3:6
+
+cat(glue("Merging rounds {str_c(AFROBAROMETER_ROUNDS, collapse = ',')}\n\n"))
 
 truthy <- function(x) {
   !is.null(x) && length(x) && as.logical(x)
@@ -31,7 +38,7 @@ AFROBAROMETER_FILENAMES <-
 #' Wrapper to read and return the Afrobarometer data for a round
 #'
 read_afrobarometer <- function(r = 6L) {
-  haven::read_sav(AFROBAROMETER_FILENAMES[r])
+  haven::read_sav(AFROBAROMETER_FILENAMES[r]) # nolint
 }
 
 
@@ -87,7 +94,7 @@ default_clean <- function(x) {
 }
 
 clean_afrobarometer <- function(.round) {
-  print(.round)
+  cat(glue("Processing round {.round}."), '\n')
   # generate the list of variable names to select
   variables <-
     map(VARIABLE_MAP, c("variables", str_c("r", .round))) %>%
@@ -103,7 +110,7 @@ clean_afrobarometer <- function(.round) {
   # apply cleaning functions to each variable
   for (i in names(out)) {
     varinfo <- VARIABLE_MAP[[i]]
-    print(glue::glue("cleaning {i}"))
+    cat("\t", glue("cleaning variable {i}"), "\n")
     out[[i]] <- default_clean(out[[i]])
 
     # Replace any patterns
@@ -161,11 +168,11 @@ clean_afrobarometer <- function(.round) {
   }
 
   # Calculate LPI. I think it is just the mean of the components.
-  afrob <- mutate(afrob, lpi = (as.numeric(lpi_food) +
-                                 as.numeric(lpi_water) +
-                                 as.numeric(lpi_medical) +
-                                 as.numeric(lpi_fuel) +
-                                 as.numeric(lpi_cash)) / 5 - 1)
+  out <- mutate(out, lpi = (as.numeric(lpi_food) +
+                             as.numeric(lpi_water) +
+                             as.numeric(lpi_medical) +
+                             as.numeric(lpi_fuel) +
+                             as.numeric(lpi_cash)) / 5 - 1)
 
   # Any other cleanup code
   out %>%
@@ -173,6 +180,8 @@ clean_afrobarometer <- function(.round) {
 }
 
 dir.create(OUTDIR, showWarnings = FALSE, recursive = TRUE)
+
 afrob <- map_df(AFROBAROMETER_ROUNDS, clean_afrobarometer) %>%
   select(round, respno, country, everything())
+
 write_rds(afrob, OUTFILE)
