@@ -20,9 +20,10 @@ the variables that I have used in my work.
     devtools::install(".")
     ```
 
-3. Run or source the script `build.R` to build the merged data.
+3. Run or source the script `download.R` to download the  data and `afrobarometer.R` to merge the data.
     ```console
-    Rscript build.R
+    Rscript download.R
+    Rscript afrobarometer
     ```
 
 ## Usage
