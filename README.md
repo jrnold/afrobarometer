@@ -1,7 +1,7 @@
 # Merged Afrobarometer Data
 
-This repository contains some R scripts that clean and merge data from 
-[Afrobarometer] surveys. Currently this includes only rounds 3--6 and 
+This repository contains some R scripts that clean and merge data from
+[Afrobarometer] surveys. Currently this includes only rounds 3--6 and
 the variables that I have used in my work.
 
 ## Build
@@ -11,18 +11,18 @@ the variables that I have used in my work.
    See the [Data Use Policy](http://afrobarometer.org/data/data-use-policy)
    before using the data.
 
-2. Copy `afrobarometer-example.yml` to `afrobarometer.yml`. Edit 
+2. Copy `afrobarometer-example.yml` to `afrobarometer.yml`. Edit
    Edit the `user` and `password` fields to your Afrobarometer username and
    password.
-   
+
 3. Install R dependencies
     ```r
     devtools::install(".")
     ```
 
-3. Run or source the script `build.R` to build the merged data.
+3. Build it
     ```console
-    Rscript build.R
+    $ make
     ```
 
 ## Usage
