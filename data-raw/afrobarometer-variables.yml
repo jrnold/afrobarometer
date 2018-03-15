@@ -901,7 +901,7 @@ neighbor_homosexuals:
   variables:
     r6: q89c
 
-neighbor_diff_religion:
+neighbor_has_hiv:
   <<: *neighbors
   description: >
     For each of the following types of people, please tell me whether you would like having people
@@ -1438,3 +1438,68 @@ languages_number:
     r4: q88f
     r5: null
     r6: null
+
+others_present:
+  type: string
+  label: Others present
+  mappings:
+    Spouse: Spouse only
+    Children Only: Children only
+  constraints:
+    enum:
+    - No one
+    - Spouse only
+    - Children only
+    - A few others
+    - Small crowd
+  missing:
+    - Missing Data
+  variables:
+    r3: q104
+    r4: q104
+    r5: q106
+    r6: q106
+
+house_water_source:
+  type: string
+  label: Source of water for household use
+  description: >
+    Please tell me whether each of the following are available inside your house, inside your compound, or outside your compound: your main source of water for household use?
+  constraints:
+    ordered: true
+    enum:
+    - Inside the house
+    - Inside the compound
+    - Outside the compound
+  missing:
+    - Missing
+    - Refused
+    - Don't know
+  variables:
+    r3: null
+    r4: q93a
+    r5: q95a
+    r6: q93a
+
+house_toilet:
+  type: string
+  label: Location of toilet or latrine
+  description: >
+    Please tell me whether each of the following are available inside your house, inside your compound, or outside your compound: A toilet or latrine
+  mappings:
+    No latrine: None, no latrine available
+  constraints:
+    enum:
+    - None, no latrine available
+    - Inside the house
+    - Inside the compound
+    - Outside the compound
+  missing:
+    - Missing
+    - Refused
+    - Don't know
+  variables:
+    r3: null
+    r4: null
+    r5: q95b
+    r6: q93b
