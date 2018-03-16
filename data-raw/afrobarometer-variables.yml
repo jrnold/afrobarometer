@@ -360,7 +360,7 @@ religion:
     Evangelical: Evangelical
     Faith Apostolic: Faith Apostolic
     Hamalite / Chérif de Nioro Brotherhood: Hamadiya Brotherhood
-    Harriste: Harriste
+    Harriste: Harrist Church
     Hindu: Hindu
     Hisbulah Mission: Hisbulah Mission
     Ibadi: Ibadi
@@ -394,11 +394,11 @@ religion:
     Nazaren Church: Nazareth Church
     Nazareth Church: Nazareth Church
     New Apostolic Church: New Apostolic Church
-    NG Kerk: NG Kerk
+    NG Kerk: Dutch Reformed
     None: None
     NOT ASKED IN THIS COUNTRY: Not asked in country
     Old Apostolic: Old Apostolic
-    Orthodox: Orthodox
+    Orthodox: Orthodox Christian
     Other: Other
     Other Christian (Moravian): Other Christian (Moravian)
     Pentecostal: Pentecostal
@@ -447,6 +447,7 @@ religion:
     r4: Q90
     r3: Q91
     r2: Q85
+
 
 religiosity_attendence:
   description: >

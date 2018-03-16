@@ -2,3 +2,4 @@
 ^data-raw$
 ^.*\.yml$
 ^.*\.Rproj$
+^\.Rproj\.user$
