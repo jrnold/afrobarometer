@@ -863,7 +863,7 @@ generalized_trust:
   variables:
     r3: q83
 
-neighbors_diff_religion:
+neighbor_diff_religion:
   description: >
     For each of the following types of people, please tell me whether you would like having people
     from this group as neighbors, dislike it, or not care: People of different religion
