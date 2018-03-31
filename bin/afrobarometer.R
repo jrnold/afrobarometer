@@ -61,28 +61,35 @@ to_ascii <- function(x) {
   stringi::stri_trans_general(x, "Any-latin; Latin-ascii")
 }
 
-NA_VALUES <- list(
-  "Don't know",
-  "Missing",
-  "Refused",
-  "Not applicable",
-  "Not asked in country"
+NA_FACTOR <- "Missing"
+NA_PATTERNS <- list(
+  "Don't know" = c(
+    "^don[']?t\\s+know.*$"
+  ),
+  "Missing" = c(
+    "^missing( data)?$"
+  ),
+  "Refused" = c(
+    "^refused( to answer)?$"
+  ),
+  "No further answer" = c(
+    "^no further (answer|reply)$"
+  ),
+  "Not applicable" = c(
+    "^not applicable.*$",
+    "^NA/No opposition$",
+    "^N/A$"
+  ),
+  "Not asked in country" = c(
+    "^not asked in .*$"
+  )
 )
 
-NA_PATTERNS <- list(
-  "^don't know$" = "Don't know",
-  "^refused( to answer)?$" = "Refused",
-  "^don[']t know ?/ ?haven[']t heard enough( to say)?$" = "Don't know",
-  "^don[']t know ?/ ?did not understand the question$" = "Don't know",
-  "^no further (answer|reply)$" = "No further answer",
-  "^(not applicable|NA |N / A).*$" = "Not applicable",
-  "^not asked in .*$" = "Not asked in country",
-  "^missing( data)?$" = "Missing")
-
 clean_na <- function(x) {
-  for (i in seq_along(NA_PATTERNS)) {
-    x <- str_replace_all(x, regex(names(NA_PATTERNS)[[i]], ignore_case = TRUE),
-                         NA_PATTERNS[[i]])
+  for (replacement in names(NA_PATTERNS)) {
+    for (pattern in NA_PATTERNS[[replacement]]) {
+        x <- str_replace_all(x, regex(pattern, ignore_case = TRUE), replacement)
+    }
   }
   x
 }
@@ -95,35 +102,35 @@ clean_variable <- function(x, config) {
     x <- as.character(x)
   }
   # process transformations
+  if (is.character(x)) {
+    x <- regularize_whitespace(x)
+    x <- regularize_quotes(x)
+    x <- regularize_slashes(x)
+    x <- to_ascii(x)
+    x <- clean_na(x)
+  }
   pp <- config[["preprocess"]]
   if (!is.null(pp)) {
-    if (is.character(x)) {
-      x <- regularize_whitespace(x)
-      x <- regularize_quotes(x)
-      x <- regularize_slashes(x)
-      x <- to_ascii(x)
-      x <- clean_na(x)
-      # Replace any patterns
-      if (!is.null(pp[["patterns"]])) {
-        for (pattern in names(pp[["patterns"]])) {
-          x <- str_replace_all(x, pattern, pp[["patterns"]][[pattern]])
-        }
+    # Replace any patterns
+    if (!is.null(pp[["patterns"]])) {
+      for (pattern in names(pp[["patterns"]])) {
+        x <- str_replace_all(x, pattern, pp[["patterns"]][[pattern]])
       }
-      # Replace any exact matches
-      if (!is.null(pp[["mappings"]])) {
-        x <- dplyr::recode(x, !!!pp[["mappings"]])
-      }
+    }
+    # Replace any exact matches
+    if (!is.null(pp[["mappings"]])) {
+      x <- dplyr::recode(x, !!!pp[["mappings"]])
+    }
 
-      if (!is.null(config[["case"]])) {
-        if (config[["case"]] == "lower") {
-          x <- str_to_lower(x)
-        } else if (case == "upper") {
-          x <- str_to_upper(x)
-        } else if (case == "title") {
-          x <- str_to_title(x)
-        } else {
-          stop("Invalid case: ", config[["case"]], "\n", .call = FALSE)
-        }
+    if (!is.null(config[["case"]])) {
+      if (config[["case"]] == "lower") {
+        x <- str_to_lower(x)
+      } else if (case == "upper") {
+        x <- str_to_upper(x)
+      } else if (case == "title") {
+        x <- str_to_title(x)
+      } else {
+        stop("Invalid case: ", config[["case"]], "\n", .call = FALSE)
       }
     }
   }
@@ -133,18 +140,83 @@ clean_variable <- function(x, config) {
     x <- as.integer(x)
   } else if (config[["type"]] == "date") {
     x <- as.Date(x)
+  } else if (config[["type"]] == "factor") {
+    # Levels
+    lvls <- config[["factor"]][["levels"]]
+    x <- if_else(is.na(x), NA_FACTOR, x)
+    # Levels associated with missing values
+    missing_values <- unname(config[["factor"]][["missing"]] %||% character(0))
+    all_lvls <- c(lvls, missing_values)
+    is_ordered <- config[["factor"]][["ordered"]] %||% FALSE
+    bad_values <- base::setdiff(unique(x), all_lvls)
+    if (length(bad_values)) {
+      warning("Bad values observed: ",
+              str_c("'", bad_values, "'", collapse = ", "))
+    }
+    x <- factor(x, levels = all_lvls)
+    if (length(missing_values)) {
+      attr(x, "missing_values") <- missing_values
+    }
+    if (is_ordered) {
+      attr(x, "ordered_levels") <- lvls
+    }
   }
-
   x
 }
 
-lpi <- function(x) {
-  mutate(out, lpi = (as.numeric(lpi_food) +
-                       as.numeric(lpi_water) +
-                       as.numeric(lpi_medical) +
-                       as.numeric(lpi_fuel) +
-                       as.numeric(lpi_cash)) / 5 - 1)
+# put LPI on 0-4 scale
+numeric_lpi <- function(x) {
+  if_else(x %in% attr(x, "missing_values"), NA_real_, as.numeric(x) - 1)
 }
+
+postprocess_funs <- list(
+  lpi = function(x, r) {
+    mutate(x, lpi = (numeric_lpi(lpi_food) +
+                       numeric_lpi(lpi_water) +
+                       numeric_lpi(lpi_medical) +
+                       numeric_lpi(lpi_fuel) +
+                       numeric_lpi(lpi_cash)) / 5)
+  },
+  age_int = function(x, r) {
+    age <- x[["age"]]
+    age <- if_else(age %in% attr(age, "missing_values"),
+                   NA_integer_, as.integer(age))
+    x[["age_int"]] <- age
+    x
+  },
+  # Categories of Age as used by AGE_COND variable in r5
+  age_cond = function(x, r) {
+    mutate(x, age_cond = fct_collapse(age,
+      "18-35" = as.character(18:35),
+      "36-50" = as.character(36:50),
+      "51 and above" = as.character(51:130)
+    ))
+  },
+  # Categories of Education as used by EDUC_COND variable in r5
+  educ_cond = function(x, r) {
+    x <- mutate(x, educ_cond =
+               fct_collapse(education,
+                          "No formal education" =
+                          c("Informal schooling only", "No formal schooling"),
+                          "Primary" = c("Some primary schooling",
+                                        "Primary school completed"),
+                          "Secondary" =
+                            c("Secondary school/high school completed",
+                              "Some secondary school/high school"),
+                          "Post-secondary" = c(
+                            "Some university",
+                            "University completed",
+                            "Post-graduate",
+                            "Post-secondary qualifications, other than university"
+                          )))
+    attr(x[["educ_cond"]], "missing_values") <- c("Don't know", "Missing", "Refused")
+    attr(x[["educ_cond"]], "ordered_levels") <-
+      c("No formal education", "Primary", "Secondary", "Post-secondary")
+    x
+  }
+)
+
+OTHERVARS <- c("lpi", "age_int", "age_cond")
 
 clean_afrobarometer <- function(.round) {
   cat(glue("Processing round {.round}."), '\n')
@@ -165,9 +237,14 @@ clean_afrobarometer <- function(.round) {
   }
 
   # Any other cleanup code goes HERE
+  for (i in names(postprocess_funs)) {
+    cat("Running ", i, "\n")
+    fxn <- postprocess_funs[[i]]
+    out <- fxn(out, .round)
+  }
 
   out %>%
-    select(one_of(names(variables))) %>%
+    select(one_of(names(variables)), one_of(OTHERVARS)) %>%
     mutate(round = UQ(.round))
 }
 
