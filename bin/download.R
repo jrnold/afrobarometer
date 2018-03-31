@@ -10,7 +10,7 @@ suppressPackageStartupMessages({
   library("httr")
 })
 
-
+CONFIG_FILE <- here::here("config.yml")
 
 #'
 #' ## Afrobarometer
@@ -70,7 +70,7 @@ download_afrobarometer_file <- function(src, dst, authentication) {
 #' type: "basic"
 #' ```
 #'
-authentication <- yaml::yaml.load_file(here::here("afrobarometer.yml")) %>%
+authentication <- yaml::yaml.load_file(CONFIG_FILE) %>%
   invoke(authenticate, .)
 
 #' Download all afrobarometer datasets
