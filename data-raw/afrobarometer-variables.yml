@@ -186,6 +186,15 @@ interviewer_id:
     r3: q110
     r2: q106
 
+interviewer_age:
+  description: Interviewer age
+  type: integer
+  variables:
+    r6: Q113
+    r5: q113
+    r4: q111
+    r3: q111
+
 interviewer_gender:
   description: Interviewer gender
   type: string
@@ -199,6 +208,19 @@ interviewer_gender:
     r4: Q112
     r3: Q112
     r2: Q108
+
+interviewer_urbrur:
+  label: Interviewer urban or rural?
+  description: >
+    Do you come from a rural or urban area?
+  type: string
+  constraints:
+    enum: ["Urban", "Rural", "Semi-Urban", "Peri-Urban"]
+  variables:
+    r6: Q115
+    r5: q115
+    r4: q113
+    r3: q113
 
 interviewer_language:
   type: string
@@ -219,6 +241,45 @@ interviewer_language_other:
   variables:
     r6: q116other
     r5: q116other
+    r4: null
+    r3: null
+    r2: null
+    r1: null
+
+interviewer_ethnicity:
+  type: string
+  lower: true
+  label: Interviewer's Tribe/Ethnic Group
+  description: Interviewer’s ethnic community, cultural group or tribe
+  variables:
+    r6: q116a1
+    r5: null
+    r4: null
+    r3: null
+
+
+interviewer_ethnicity_other:
+  type: string
+  lower: true
+  patterns:
+    "^$": .na.character
+  variables:
+    r6: q116a1_other
+    r5: null
+    r4: null
+    r3: null
+
+
+interviewer_education:
+  type: string
+  label: Interviewer’s education
+  description: >
+    Interviewer’s highest level of education
+  variables:
+    r6: q117
+    r5: q117
+    r4: q115
+    r3: q115
 
 # Demographics
 
@@ -338,7 +399,7 @@ religion:
     Celestial Christianity: Celestial Christianity
     Christian (general/other): Christian (general / other)
     Christian Missions in Many Lands: Christian Missions in Many Lands
-    Christian only: Christian only
+    Christian only: Christian
     Christian Rationalism: Christian Rationalism
     Christianisme Celeste: Celestial Christianity
     Church of Christ: Church of Christ
@@ -359,21 +420,21 @@ religion:
     Emmanuel: Emmanuel
     Evangelical: Evangelical
     Faith Apostolic: Faith Apostolic
-    Hamalite / Chérif de Nioro Brotherhood: Hamadiya Brotherhood
-    Harriste: Harriste
+    Hamalite / Cherif de Nioro Brotherhood: Hamadiya Brotherhood
+    Harriste: Harrist Church
     Hindu: Hindu
     Hisbulah Mission: Hisbulah Mission
     Ibadi: Ibadi
-    Independent: Independent
-    IPCC: IPCC
+    Independent: African Independent Church
+    IPCC: International Pentecostal Church of Christ
     Ismaeli: Ismaeli
     Izala: Izala
     Jehovah's Witness: Jehovah's Witness
     Jewish: Jewish
     Johanne Masowe: Johanne Masowe
-    Last Church: Last Church
+    Last Church: Last Church of God
     Last Church of God: Last Church of God
-    Last Church/Reform: Last Church / Reform
+    Last Church/Reform: Last Church of God
     Layene: Layene
     Lutheran: Lutheran
     Marathi: Marathi
@@ -381,11 +442,11 @@ religion:
     Methodist: Methodist
     Mormon: Mormon
     Mouridiya Brotherhood: Mouridiya Brotherhood
-    Muslim (general/other): Muslim (general / other)
+    Muslim (general/other): Muslim
     Muslim khadre: Muslim Khadre
     Muslim Layène: Layene
     Muslim Mouride: Mouridiya Brotherhood
-    Muslim only: Muslim only
+    Muslim only: Muslim
     Muslim Tijane: Tijaniya Brotherhood
     Muslim, Shiite: Muslim, Shiite
     Muslim, Sunni: Muslim, Sunni
@@ -394,11 +455,11 @@ religion:
     Nazaren Church: Nazareth Church
     Nazareth Church: Nazareth Church
     New Apostolic Church: New Apostolic Church
-    NG Kerk: NG Kerk
+    NG Kerk: Dutch Reformed
     None: None
     NOT ASKED IN THIS COUNTRY: Not asked in country
     Old Apostolic: Old Apostolic
-    Orthodox: Orthodox
+    Orthodox: Orthodox Christian
     Other: Other
     Other Christian (Moravian): Other Christian (Moravian)
     Pentecostal: Pentecostal
@@ -414,11 +475,11 @@ religion:
     Salvation Army: Salvation Army
     Seventh Day Adventist: Seventh Day Adventist
     Shia: Shia
-    Shia only: Shia only
+    Shia only: Shia
     Sidya: Sidya
     St John Apostolic: St John Apostolic
     Sukuti: Sukuti
-    Sunni only: Sunni only
+    Sunni only: Sunni
     Tamil: Tamil
     Telegu: Telegu
     Tijaniya Brotherhood: Tijaniya Brotherhood
@@ -428,8 +489,8 @@ religion:
     Traditional religion: Traditional / ethnic religion
     Traditional/ethnic religion: Traditional / ethnic religion
     Twelve Apostles: Twelve Apostles
-    UCCSA: UCCSA
-    United Church: United Church
+    UCCSA: United Congregational Church of Southern Africa
+    United Church: United Church of Zambia
     United Church of Zambia: United Church of Zambia
     United Church of Zamia: United Church of Zambia
     Utopia Church: Utopia Church
@@ -447,6 +508,7 @@ religion:
     r4: Q90
     r3: Q91
     r2: Q85
+
 
 religiosity_attendence:
   description: >
@@ -862,7 +924,7 @@ generalized_trust:
   variables:
     r3: q83
 
-neighbors_diff_religion:
+neighbor_diff_religion:
   description: >
     For each of the following types of people, please tell me whether you would like having people
     from this group as neighbors, dislike it, or not care: People of different religion
@@ -901,7 +963,7 @@ neighbor_homosexuals:
   variables:
     r6: q89c
 
-neighbor_diff_religion:
+neighbor_has_hiv:
   <<: *neighbors
   description: >
     For each of the following types of people, please tell me whether you would like having people
@@ -1438,3 +1500,217 @@ languages_number:
     r4: q88f
     r5: null
     r6: null
+
+others_present:
+  type: string
+  label: Others present
+  mappings:
+    Spouse: Spouse only
+    Children Only: Children only
+  constraints:
+    enum:
+    - No one
+    - Spouse only
+    - Children only
+    - A few others
+    - Small crowd
+  missing:
+    - Missing Data
+  variables:
+    r3: q104
+    r4: q104
+    r5: q106
+    r6: q106
+
+house_water_source:
+  type: string
+  label: Source of water for household use
+  description: >
+    Please tell me whether each of the following are available inside your house, inside your compound, or outside your compound: your main source of water for household use?
+  constraints:
+    ordered: true
+    enum:
+    - Inside the house
+    - Inside the compound
+    - Outside the compound
+  missing:
+    - Missing
+    - Refused
+    - Don't know
+  variables:
+    r3: null
+    r4: q93a
+    r5: q95a
+    r6: q93a
+
+house_toilet:
+  type: string
+  label: Location of toilet or latrine
+  description: >
+    Please tell me whether each of the following are available inside your house, inside your compound, or outside your compound: A toilet or latrine
+  mappings:
+    No latrine: None, no latrine available
+  constraints:
+    enum:
+    - None, no latrine available
+    - Inside the house
+    - Inside the compound
+    - Outside the compound
+  missing:
+    - Missing
+    - Refused
+    - Don't know
+  variables:
+    r3: null
+    r4: null
+    r5: q95b
+    r6: q93b
+
+
+religion_cond:
+  type: string
+  description: Respondent's religion (binned)
+  comment: >
+    This is similar to the `RELIG_COND` variable in round 6, but applied to
+    all rounds. The `RELIG_COND` is also not consistent within defitions.
+  mappings:
+    African Abraham: Christian
+    African Abraham Church: Christian
+    African Apostolic Faith: Christian
+    African Independent Church: Christian
+    African Inland Church: Christian
+    African International: Christian
+    Agnostic: None
+    Agnostic (Do not know if there is a God): None
+    Agnostic(Do not know if there is a God): None
+    Alliance Chretienne et Missionnaire: Christian
+    Anglican: Christian
+    Ansardine Brotherhood: Muslim
+    Apostolic: Christian
+    Apostolic Church: Christian
+    Apostolic Faith/New_United: Christian
+    Assemblies of God: Christian
+    Assembly of God: Christian
+    Atheist: None
+    Atheist (Do not believe in a God): None
+    Atheist(Do not believe in a God): None
+    Bahai: Other
+    Baptist: Christian
+    Bashariya Mission: Muslim
+    Bible Believers: Christian
+    Brethren in Christ: Christian
+    Buddhist: Other
+    Calvinist: Christian
+    Calviniste (FJKM): Christian
+    Catholic: Christian
+    Celestial Christianity: Christian
+    Christian (general/other): Christian
+    Christian Missions in Many Lands: Christian
+    Christian only: Christian
+    Christian Rationalism: Christian
+    Christianisme Celeste: Christian
+    Church of Christ: Christian
+    CMA: Christian
+    CMML: Christian
+    Confr Arie de la Hamadiya (Hamalite): Muslim
+    Confr Arie de la Trabiya: Muslim
+    Confr Arie de la Wahhabiya (Wahhabite): Muslim
+    Confr Arie des Lay anes(brotherhood): Muslim
+    Confrerie de la Hamadiya (Hamalite): Muslim
+    Confrerie de la Trabiya: Muslim
+    Coptic: Christian
+    Covenant Church: Christian
+    Dutch Reform: Christian
+    Dutch Reformed: Christian
+    Dutch Reformed (e.g. NGK,NHK,GK,Mission,APK,URC): Christian
+    Don't know: null
+    Emmanuel: Christian
+    Evangelical: Christian
+    Faith Apostolic: Christian
+    Hamalite / Chérif de Nioro Brotherhood: Muslim
+    Harriste: Christian
+    Hindu: Other
+    Hisbulah Mission: Muslim
+    Ibadi: Muslim
+    Independent: Christian
+    IPCC: Christian
+    Ismaeli: Muslim
+    Izala: Muslim
+    Jehovah's Witness: Christian
+    Jewish: Other
+    Johanne Masowe: Other
+    Last Church: Christian
+    Last Church of God: Christian
+    Last Church/Reform: Christian
+    Layene: Muslim
+    Lutheran: Christian
+    Marathi: Other
+    Mennonite: Christian
+    Methodist: Christian
+    Mormon: Christian
+    Mouridiya Brotherhood: Muslim
+    Muslim (general/other): Muslim
+    Muslim khadre: Muslim
+    Muslim Layène: Muslim
+    Muslim Mouride: Muslim
+    Muslim only: Muslim
+    Muslim Tijane: Muslim
+    Muslim, Shiite: Muslim
+    Muslim, Sunni: Muslim
+    Nationality: Nationality
+    Nazaren: Christian
+    Nazaren Church: Christian
+    Nazareth Church: Christian
+    New Apostolic Church: Christian
+    NG Kerk: Christian
+    None: None
+    NOT ASKED IN THIS COUNTRY: null
+    Old Apostolic: Christian
+    Orthodox: Christian
+    Other: Other
+    Other Christian (Moravian): Christian
+    Pentecostal: Christian
+    Presbyterian: Christian
+    Protestant (Evangelical/Pentecostal): Christian
+    Protestant (Mainstream): Christian
+    Qadiriya Brotherhood: Muslim
+    Quaker / Friends: Christian
+    Quaker/Friends: Christian
+    Reformed Church in Zimbabwe: Christian
+    Rhema: Christian
+    Roman Catholic: Christian
+    Salvation Army: Christian
+    Seventh Day Adventist: Christian
+    Shia: Muslim
+    Shia only: Muslim
+    Sidya: Muslim
+    St John Apostolic: Christian
+    Sukuti: Muslim
+    Sunni only: Muslim
+    Tamil: Other
+    Telegu: Other
+    Tijaniya Brotherhood: Muslim
+    Toby Betela: Other
+    Topia: Christian
+    Traditional / ethnic religion: Other
+    Traditional religion: Other
+    Traditional/ethnic religion: Other
+    Twelve Apostles: Christian
+    UCCSA: Christian
+    United Church: Christian
+    United Church of Zambia: Christian
+    United Church of Zamia: Christian
+    Utopia Church: Christian
+    Vahao ny Oloko: Christian
+    Voice of unity/unity of christ/faith of unity: Christian
+    Wahhabiya Brotherhood: Muslim
+    Zaoga: Christian
+    ZCC: Christian
+    Zion: Christian
+    Zionist Christian Church: Christian
+  variables:
+    r6: Q98A
+    r5: Q98A
+    r4: Q90
+    r3: Q91
+    r2: Q85

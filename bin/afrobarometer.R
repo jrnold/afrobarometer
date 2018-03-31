@@ -185,3 +185,4 @@ afrob <- map_df(AFROBAROMETER_ROUNDS, clean_afrobarometer) %>%
   select(round, respno, country, everything())
 
 write_rds(afrob, OUTFILE)
+
