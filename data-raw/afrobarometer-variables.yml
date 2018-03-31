@@ -30,44 +30,45 @@ country:
   constraints:
     pattern: "^[A-Z]{2}$"
     is_nullable: false
-  mappings:
-    Botswana: BW
-    Ghana: GH
-    Lesotho: LS
-    Malawi: MW
-    Mali: ML
-    Namibia: NA
-    Nigeria: NG
-    South Africa: ZA
-    Tanzania: TZ
-    Uganda: UG
-    Zambia: ZM
-    Zimbabwe: ZW
-    Cape Verde: CV
-    Kenya: KE
-    Mozambique: MZ
-    Senegal: SN
-    Benin: BJ
-    Madagascar: MG
-    Burkina Faso: BF
-    Liberia: LR
-    Mauritius: MU
-    Sierra Leone: SL
-    Niger: NE
-    Togo: TG
-    Burundi: BI
-    Cameroon: CM
-    Cote d'Ivoire: CI
-    Guinea: GN
-    Ethiopia: ET
-    Swaziland: SZ
-    Algeria: DZ
-    Egypt: EG
-    Morocco: MA
-    Sudan: SD
-    Tunisia: TN
-    Gabon: GA
-    São Tomé and Príncipe: ST
+  preprocess:
+    mappings:
+      Botswana: BW
+      Ghana: GH
+      Lesotho: LS
+      Malawi: MW
+      Mali: ML
+      Namibia: NA
+      Nigeria: NG
+      South Africa: ZA
+      Tanzania: TZ
+      Uganda: UG
+      Zambia: ZM
+      Zimbabwe: ZW
+      Cape Verde: CV
+      Kenya: KE
+      Mozambique: MZ
+      Senegal: SN
+      Benin: BJ
+      Madagascar: MG
+      Burkina Faso: BF
+      Liberia: LR
+      Mauritius: MU
+      Sierra Leone: SL
+      Niger: NE
+      Togo: TG
+      Burundi: BI
+      Cameroon: CM
+      Cote d'Ivoire: CI
+      Guinea: GN
+      Ethiopia: ET
+      Swaziland: SZ
+      Algeria: DZ
+      Egypt: EG
+      Morocco: MA
+      Sudan: SD
+      Tunisia: TN
+      Gabon: GA
+      Sao Tome and Principe: ST
   variables:
     r6: country
     r5: country
@@ -77,11 +78,10 @@ country:
 
 urbrur:
   description: Urban or Rural Primary Sampling Unit
-  type: string
+  type: factor
   constraints:
     is_nullable: false
     enum: ["Urban", "Rural", "Semi-Urban", "Peri-Urban"]
-    # Are semi- and peri-urban the same thing? No.
   variables:
     r6: urbrur
     r5: urbrur
@@ -94,7 +94,8 @@ region:
   description: "Region/Province"
   constraints:
     is_nullable: false
-  lower: true
+  preprocess:
+    case: lower
   variables:
     r6: region
     r5: region
@@ -107,7 +108,8 @@ district:
   description: "Distict or lowest sampling level"
   constraints:
     is_nullable: true
-  lower: true
+  preprocess:
+    case: lower
   variables:
     r6: location.level.1
     r5: null
@@ -155,7 +157,8 @@ combinwt:
 interview_language:
   description: Primary language in which the interview was conducted
   type: string
-  lower: true
+  preprocess:
+    case: lower
   constraints:
     is_nullable: false
   variables:
@@ -169,9 +172,10 @@ interview_language_other:
   description: Primary language in which the interview was conducted,
     open-ended response if they answered "OTHER".
   type: string
-  lower: true
-  patterns:
-    "^$": .na.character
+  preprocess:
+    case: lower
+    patterns:
+      "^$": .na.character
   variables:
     r6: q103other
     r5: q103other
@@ -213,9 +217,13 @@ interviewer_urbrur:
   label: Interviewer urban or rural?
   description: >
     Do you come from a rural or urban area?
-  type: string
-  constraints:
-    enum: ["Urban", "Rural", "Semi-Urban", "Peri-Urban"]
+  type: factor
+  factor:
+    levels:
+    - Urban
+    - Rural
+    - Semi-Urban
+    - Peri-Urban
   variables:
     r6: Q115
     r5: q115
@@ -224,8 +232,9 @@ interviewer_urbrur:
 
 interviewer_language:
   type: string
-  lower: true
   description: Home language of the interviewer
+  preprocess:
+    case: lower
   variables:
     r6: q116
     r5: q116
@@ -235,9 +244,10 @@ interviewer_language:
 
 interviewer_language_other:
   type: string
-  lower: true
-  patterns:
-    "^$": .na.character
+  preprocess:
+    case: lower
+    patterns:
+      "^$": .na.character
   variables:
     r6: q116other
     r5: q116other
@@ -248,9 +258,10 @@ interviewer_language_other:
 
 interviewer_ethnicity:
   type: string
-  lower: true
   label: Interviewer's Tribe/Ethnic Group
   description: Interviewer’s ethnic community, cultural group or tribe
+  preprocess:
+    case: lower
   variables:
     r6: q116a1
     r5: null
@@ -260,15 +271,15 @@ interviewer_ethnicity:
 
 interviewer_ethnicity_other:
   type: string
-  lower: true
-  patterns:
-    "^$": .na.character
+  preprocess:
+    case: lower
+    patterns:
+      "^$": .na.character
   variables:
     r6: q116a1_other
     r5: null
     r4: null
     r3: null
-
 
 interviewer_education:
   type: string
@@ -282,1435 +293,1425 @@ interviewer_education:
     r3: q115
 
 # Demographics
-
-age:
-  description: Respondent's age
-  type: integer
-  constraints:
-    minimum: 0
-  mappings:
-    Don't Know: "Don't know"
-    Refused to answer: Refused
-  missing:
-    - "Don't know"
-    - "Refused"
-    - "Missing"
-  variables:
-    r6: q1
-    r5: q1
-    r4: q1
-    r3: q1
-    r2: Q80
-
-gender:
-  description: Respondent's gender
-  type: string
-  constraints:
-    enum:
-    - Male
-    - Female
-  variables:
-    r6: Q101
-    r5: Q101
-    r4: Q101
-    r3: Q101
-    r2: Q96
-
-respondent_language:
-  description: Home language of the respondent
-  type: string
-  lower: true
-  variables:
-    r6: q2
-    r5: q2
-    r4: q3
-    r3: q3
-    r2: q83
-
-respondent_language_other:
-  description: Home language of the respondent,
-    open-ended response if they answered "OTHER".
-  patterns:
-    "^$": .na.character
-  lower: true
-  type: string
-  variables:
-    r6: q2other
-    r5: q2other
-    r4: q3other
-
-race:
-  description: Respondent's race
-  type: string
-  mappings:
-    "Coloured / Mixed Race": "Coloured / Mixed race"
-    # madagascar in R3
-    "240": "Missing"
-  constraints:
-    enum:
-    - "Arab / Lebanese / North African"
-    - "Black / African"
-    - "Coloured / Mixed race"
-    - "East Asian (Chinese, Korean, Indonesian, etc.)"
-    - "South Asian (Indian, Pakistani, etc.)"
-    - "White / European"
-    - "Other"
-  variables:
-    r6: Q102
-    r5: Q102
-    r4: Q102
-    r3: Q102
-    r2: Q96NEW
-
-religion:
-  type: string
-  description: Respondent's religion
-  lower: true
-  mappings:
-    African Abraham: African Abraham Church
-    African Abraham Church: African Abraham Church
-    African Apostolic Faith: African Apostolic Faith
-    African Independent Church: African Independent Church
-    African Inland Church: African Inland Church
-    African International: African International
-    Agnostic: Agnostic
-    Agnostic (Do not know if there is a God): Agnostic
-    Agnostic(Do not know if there is a God): Agnostic
-    Alliance Chretienne et Missionnaire: Christian and Missionary Alliance
-    Anglican: Anglican
-    Ansardine Brotherhood: Ansardine Brotherhood
-    Apostolic: Apostolic Church
-    Apostolic Church: Apostolic Church
-    Apostolic Faith/New_United: Apostolic Faith / New_United
-    Assemblies of God: Assemblies of God
-    Assembly of God: Assemblies of God
-    Atheist: Atheist
-    Atheist (Do not believe in a God): Atheist
-    Atheist(Do not believe in a God): Atheist
-    Bahai: Bahai
-    Baptist: Baptist
-    Bashariya Mission: Bashariya Mission
-    Bible Believers: Bible Believers
-    Brethren in Christ: Brethren in Christ
-    Buddhist: Buddhist
-    Calvinist: Calvinist
-    Calviniste (FJKM): Calvinist
-    Catholic: Catholic
-    Celestial Christianity: Celestial Christianity
-    Christian (general/other): Christian (general / other)
-    Christian Missions in Many Lands: Christian Missions in Many Lands
-    Christian only: Christian
-    Christian Rationalism: Christian Rationalism
-    Christianisme Celeste: Celestial Christianity
-    Church of Christ: Church of Christ
-    CMA: Christian and Missionary Alliance
-    CMML: Christian Missions in Many Lands
-    Confr Arie de la Hamadiya (Hamalite): Hamadiya Brotherhood
-    Confr Arie de la Trabiya: Trabiya Brotherhood
-    Confr Arie de la Wahhabiya (Wahhabite): Wahhabiya Brotherhood
-    Confr Arie des Lay anes(brotherhood): Layene
-    Confrerie de la Hamadiya (Hamalite): Hamadiya Brotherhood
-    Confrerie de la Trabiya: Trabiya Brotherhood
-    Coptic: Coptic
-    Covenant Church: Covenant Church
-    Dutch Reform: Dutch Reformed
-    Dutch Reformed: Dutch Reformed
-    Dutch Reformed (e.g. NGK,NHK,GK,Mission,APK,URC): Dutch Reformed
-    Don't know: "Don't Know"
-    Emmanuel: Emmanuel
-    Evangelical: Evangelical
-    Faith Apostolic: Faith Apostolic
-    Hamalite / Cherif de Nioro Brotherhood: Hamadiya Brotherhood
-    Harriste: Harrist Church
-    Hindu: Hindu
-    Hisbulah Mission: Hisbulah Mission
-    Ibadi: Ibadi
-    Independent: African Independent Church
-    IPCC: International Pentecostal Church of Christ
-    Ismaeli: Ismaeli
-    Izala: Izala
-    Jehovah's Witness: Jehovah's Witness
-    Jewish: Jewish
-    Johanne Masowe: Johanne Masowe
-    Last Church: Last Church of God
-    Last Church of God: Last Church of God
-    Last Church/Reform: Last Church of God
-    Layene: Layene
-    Lutheran: Lutheran
-    Marathi: Marathi
-    Mennonite: Mennonite
-    Methodist: Methodist
-    Mormon: Mormon
-    Mouridiya Brotherhood: Mouridiya Brotherhood
-    Muslim (general/other): Muslim
-    Muslim khadre: Muslim Khadre
-    Muslim Layène: Layene
-    Muslim Mouride: Mouridiya Brotherhood
-    Muslim only: Muslim
-    Muslim Tijane: Tijaniya Brotherhood
-    Muslim, Shiite: Muslim, Shiite
-    Muslim, Sunni: Muslim, Sunni
-    Nationality: Nationality
-    Nazaren: Nazareth Church
-    Nazaren Church: Nazareth Church
-    Nazareth Church: Nazareth Church
-    New Apostolic Church: New Apostolic Church
-    NG Kerk: Dutch Reformed
-    None: None
-    NOT ASKED IN THIS COUNTRY: Not asked in country
-    Old Apostolic: Old Apostolic
-    Orthodox: Orthodox Christian
-    Other: Other
-    Other Christian (Moravian): Other Christian (Moravian)
-    Pentecostal: Pentecostal
-    Presbyterian: Presbyterian
-    Protestant (Evangelical/Pentecostal): Protestant (Evangelical / Pentecostal)
-    Protestant (Mainstream): Protestant (Mainstream)
-    Qadiriya Brotherhood: Qadiriya Brotherhood
-    Quaker / Friends: Quaker / Friends
-    Quaker/Friends: Quaker / Friends
-    Reformed Church in Zimbabwe: Reformed Church in Zimbabwe
-    Rhema: Rhema
-    Roman Catholic: Catholic
-    Salvation Army: Salvation Army
-    Seventh Day Adventist: Seventh Day Adventist
-    Shia: Shia
-    Shia only: Shia
-    Sidya: Sidya
-    St John Apostolic: St John Apostolic
-    Sukuti: Sukuti
-    Sunni only: Sunni
-    Tamil: Tamil
-    Telegu: Telegu
-    Tijaniya Brotherhood: Tijaniya Brotherhood
-    Toby Betela: Toby Betela
-    Topia: Topia
-    Traditional / ethnic religion: Traditional / ethnic religion
-    Traditional religion: Traditional / ethnic religion
-    Traditional/ethnic religion: Traditional / ethnic religion
-    Twelve Apostles: Twelve Apostles
-    UCCSA: United Congregational Church of Southern Africa
-    United Church: United Church of Zambia
-    United Church of Zambia: United Church of Zambia
-    United Church of Zamia: United Church of Zambia
-    Utopia Church: Utopia Church
-    Vahao ny Oloko: Vahao ny Oloko
-    Voice of unity/unity of christ/faith of unity: Voice of unity / Unity of Christ / Faith
-      of Unity
-    Wahhabiya Brotherhood: Wahhabiya Brotherhood
-    Zaoga: Zaoga
-    ZCC: Zionist Christian Church
-    Zion: Zionist Christian Church
-    Zionist Christian Church: Zionist Christian Church
-  variables:
-    r6: Q98A
-    r5: Q98A
-    r4: Q90
-    r3: Q91
-    r2: Q85
-
-
-religiosity_attendence:
-  description: >
-    People practice their religion in different ways. Aside from weddings and funerals, how often do
-    you personally engage in religious practices like prayer, reading a religious book, or attending a religious
-    service or a meeting of a religious group? Would you say you do so:
-  type: string
-  mappings:
-    "Respondent has no religion": "Not applicable"
-  ordered: false
-  constraints:
-    enum:
-      - Never
-      - "About once a year or less"
-      - A few times a year
-      - "About once every several months"
-      - About once a month
-      - About once a week
-      - A few times a week
-      - "More than once a week"
-      - About once a day
-      - More than once a day
-  comment: >
-    R3 has different categories than latter rounds. Actual use would
-    require reconciling these categories.
-  variables:
-    r6: q98b
-    r5: null
-    r4: null
-    r3: Q92
-    r2: Q86
-
-religiosity_importance:
-  description: >
-     How important is religion in your life?
-  type: string
-  missing:
-    - Refused
-    - Missing
-    - Don't know
-  mappings:
-    Refused to answer: Refused
-  constraints:
-    enum:
-      - Not at all important
-      - Somewhat important
-      - Very important
-      - Not very important
-  ordered: true
-  variables:
-    r5: q98b
-    r4: q91
-
-education:
-  type: string
-  # it's not exactly ordered
-  ordered: false
-  constraints:
-    enum:
-    - No formal schooling
-    - Some primary schooling
-    - Informal schooling only
-    - Primary school completed
-    - Some secondary school / high school
-    - Secondary school / high school completed
-    - Post-secondary qualifications, other than university
-    - Post-secondary qualifications
-    - Some university
-    - University completed
-    - Post-graduate
-  missing:
-    - Missing
-    - Don't know
-    - Refused
-  mappings:
-    Secondary school completed / high school: "Secondary school / high school completed"
-    No formal schooling: No formal schooling
-    Some primary schooling: Some primary schooling
-    Some secondary school / high school: Some secondary school / high school
-    Some university: Some university
-    Primary school completed: Primary school completed
-    University completed: University completed
-    Post-secondary qualifications, not university: "Post-secondary qualifications, other than university"
-    Post-graduate: Post-graduate
-    Informal schooling only: Informal schooling only
-    Secondary school / high school completed: Secondary school / high school completed
-    Post-secondary qualifications, other than university: Post-secondary qualifications,
-      other than university
-  variables:
-    r6: Q97
-    r5: Q97
-    r4: Q89
-    r3: Q90
-    r2: Q84
-
-occupation:
-  description: "Respondent's occupation"
-  type: string
-  constraints:
-    enum:
-      - Agriculture / farming / fishing / forestry
-      - Artisan or skilled manual worker
-      - Businessperson (own business, 10 or more)
-      - Businessperson (own business, less than 10)
-      - Businessperson (works for others)
-      - Clerical or secretarial
-      - Disabled
-      - Domestic worker / maid
-      - Government worker
-      - Housewife / homemaker
-      - Mid-level professional
-      - Miner
-      - Never had a job
-      - Other
-      - Professional worker
-      - Retired
-      - Student
-      - Security services
-      - Trader / hawker / vendor
-      - Teacher
-      - Retail / shop
-      - Supervisor / foreman / senior manager
-      - Unemployed
-      - Unskilled manual worker
-      - Upper-level professional
-  mappings:
-    Artisan / skilled, formal sector: Artisan or skilled manual worker
-    Artisan / skilled, informal sector: Artisan or skilled manual worker
-    Housewife / work in household: Housewife / homemaker
-    Retail worker: Retail / shop
-    Trader / Hawker / Vendor: Trader / hawker / vendor
-    Unskilled manual, formal sector: Unskilled manual worker
-    Unskilled manual, informal sector: Unskilled manual worker
-    Supervisor / Foreman: Supervisor / foreman / senior manager
-    Police / Security / Military: Security services
-    Subsistence farmer (own consumption only): Agriculture / farming / fishing / forestry
-    Peasant farmer (own consumption and sale): Agriculture / farming / fishing / forestry
-    Pastoralist / herder / raise livestock: Agriculture / farming / fishing / forestry
-    Fisherman: Agriculture / farming / fishing / forestry
-    Farm worker: Agriculture / farming / fishing / forestry
-    Commercial farmer (mainly for sale): Agriculture / farming / fishing / forestry
-    Retail / Shop: Retail / shop
-    Supervisor / Foreman / Senior Manager: Supervisor / foreman / senior manager
-  variables:
-    r6: Q96A
-    r5: null
-    r4: null
-    r3: Q95
-    r2: Q88
-
-ethnicity:
-  description: "Respondent's ethnicity"
-  type: string
-  lower: true
-  patterns:
-    ""
-  mappings:
-    "Refused to answer": Refused
-    "Not asked": "Not asked in country"
-    "zarrma / songhai": "zarma / songhai"
-    "yalumka": "yalunka"
-    "white": "white / european"
-    "soninke / sarakoll": "soninke / sarakole"
-    "soninke / sarakolle": "soninke / sarakole"
-    "sotho / south sotho": "sesotho / sotho / south sotho"
-    "senoufo": "senufo"
-    "sonink": "soninke"
-    "related to island originin": "related to island origin"
-    "portugais": "portuguese"
-    "peulh / fulfude": "peulh / fulfulde"
-    "peuhl / fulfuld": "peulh / fulfulde"
-    "peul": "peulh"
-    "peule": "peulh"
-    "peuhl": "peulh"
-    "pedi / north sotho": "pedi / spedi / north sotho"
-    "others": "other"
-    "national id only or 'doesn't think of self in those terms'": "national identity only"
-    "national identity only, or 'doesnt think of self in those terms'": "national identity only"
-    "national identity only, or \"doesn't think of self in those terms\"": "national identity only"
-    "amerivan or european": "american or european"
-    "afrikaaner": "afrikaner"
-  variables:
-    r6: Q87
-    r5: Q84
-    r4: Q79
-    r3: Q79
-    r2: null
-
-shelter_type:
-  type: string
-  missing:
-  - Missing
-  ordered: false
-  constraints:
-    enum:
-    - Flat in a block of flats
-    - Hostel in an industrial compound or farming compound
-    - Non-traditional / formal house
-    - Other
-    - Room in a hotel, or a residential hotel
-    - Single room in a larger dwelling structure or backyard
-    - Temporary structure / shack
-    - Traditional house / hut
-  variables:
-    r6: Q104
-    r5: Q104
-    r4: null
-    r3: null
-    r2: Q98
-
-roof_type:
-  type: string
-  constraints:
-    enum:
-    - Asbestos
-    - Concrete
-    - Metal, tin or zinc
-    - Multiple materials
-    - Plastic sheets
-    - Shingles
-    - Some other material
-    - Thatch or grass
-    - Tiles
-  mappings:
-    Asbestos: Asbestos
-    Concrete: Concrete
-    "Could not tell / could not see": "Missing"
-    Metal, tin or zinc: Metal, tin or zinc
-    Missing: Missing
-    Multiple materials: Multiple materials
-    Plastic sheets: Plastic sheets
-    Shingles: Shingles
-    Some other material: Some other material
-    Thatch or grass: Thatch or grass
-    Tiles: Tiles
-  missing:
-  - "Could not tell / could not see"
-  - "Missing"
-  variables:
-    r6: Q105
-    r5: Q105
-
-lpi_food:
-  description: Gone without food
-  type: string
-  missing:
-  - Don't know
-  - Missing
-  ordered: true
-  constraints:
-    enum:
-    - Always
-    - Many times
-    - Several times
-    - Just once or twice
-    - Never
-  variables:
-    r6: Q8A
-    r5: Q8A
-    r4: Q8A
-    r3: Q8A
-    r2: Q9A
-
-lpi_water:
-  type: string
-  missing:
-  - Don't Know
-  - Missing
-  ordered: true
-  constraints:
-    enum:
-    - Always
-    - Many times
-    - Several times
-    - Just once or twice
-    - Never
-  description: Gone without water
-  variables:
-    r6: Q8B
-    r5: Q8B
-    r4: Q8B
-    r3: Q8B
-    r2: Q9B
-
-lpi_medical:
-  <<: &lpi
-    type: string
-    missing:
-    - Don't know
-    - Missing
-    ordered: true
-    constraints:
-      enum:
-      - Always
-      - Many times
-      - Several times
-      - Just once or twice
-      - Never
-    description: Gone without medical care
-  variables:
-    r6: Q8C
-    r5: Q8C
-    r4: Q8C
-    r3: Q8C
-    r2: Q9C
-
-lpi_fuel:
-  <<: *lpi
-  description: Gone without enough fuel
-  variables:
-    r6: Q8D
-    r5: Q8D
-    r4: Q8D
-    r3: Q8D
-    r2: Q9E
-
-lpi_cash:
-  <<: *lpi
-  description: Gone without cash income
-  variables:
-    r6: Q8E
-    r5: Q8E
-    r4: Q8E
-    r3: Q8E
-    r2: Q9F
-
-women_leaders:
-  <<: &binarychoice
-    type: string
-    missing:
-    - "Don't know"
-    - "Missing"
-    - "Refused"
-    mappings:
-      Agree very strongly with A: "Agree very strongly with 1"
-      Agree with A: "Agree with 1"
-      Agree with B: "Agree with 2"
-      Agree very strongly with B: "Agree very strongly with 2"
-    ordered: true
-    constraints:
-      enum:
-      - Agree very strongly with 1
-      - Agree with 1
-      - Agree with neither
-      - Agree with 2
-      - Agree very strongly with 2
-  description: Men only as leaders vs. women leaders ok
-  variables:
-    r6: Q18
-    r5: Q22
-    r4: null
-    r3: Q24
-    r2: null
-
-living_conditions:
-  description: >
-    In general, how would you describe: Your own present living conditions?
-  type: string
-  mappings:
-    Fairly Good: Fairly good
-    Very Bad: Very bad
-  ordered: true
-  constraints:
-    enum:
-    - Very bad
-    - Fairly bad
-    - Neither good nor bad
-    - Fairly good
-    - Very good
-  variables:
-    r6: q4b
-    r5: q3b
-    r4: q4b
-    r3: q4b
-    r2: q1b
-
-women_equal_rights:
-  <<: *binarychoice
-  description: Women have equal rights vs. subject to traditional laws
-  variables:
-    r6: null
-    r5: Q23
-    r4: null
-    r3: Q23
-    r2: Q67
-
-girls_education:
-  <<: *binarychoice
-  description: >
-    Education recipient priority: boy vs ability
-  variables:
-    r6: null
-    r5: Q24
-    r4: null
-    r3: null
-    r2: null
-
-generalized_trust:
-  description: >
-    Generally speaking, would you say that most people can be trusted or that you must be very careful in
-    dealing with people?
-  type: string
-  mappings:
-  "Missing data": "Missing"
-  missing:
-  - "Don't know"
-  - "Missing"
-  ordered: true
-  constraints:
-    enum:
-    - "You must be very careful"
-    - "Most people can be trusted"
-  variables:
-    r3: q83
-
-neighbor_diff_religion:
-  description: >
-    For each of the following types of people, please tell me whether you would like having people
-    from this group as neighbors, dislike it, or not care: People of different religion
-  <<: &neighbors
-    type: string
-    ordered: true
-    mappings:
-      Not asked in this country: Not asked in country
-    missing:
-      - Missing
-      - Don't know
-      - Not asked in country
-    constraints:
-      enum:
-      - Strongly dislike
-      - Somewhat dislike
-      - Would not care
-      - Somewhat like
-      - Strongly like
-  variables:
-    r6: q89a
-
-neighbor_diff_ethnic:
-  <<: *neighbors
-  description: >
-    For each of the following types of people, please tell me whether you would like having people
-    from this group as neighbors, dislike it, or not care: People from other ethnic groups.
-  variables:
-    r6: q89b
-
-neighbor_homosexuals:
-  <<: *neighbors
-  description: >
-    For each of the following types of people, please tell me whether you would like having people
-    from this group as neighbors, dislike it, or not care: Homosexuals.
-  variables:
-    r6: q89c
-
-neighbor_has_hiv:
-  <<: *neighbors
-  description: >
-    For each of the following types of people, please tell me whether you would like having people
-    from this group as neighbors, dislike it, or not care: People who have HIV/AIDS
-  variables:
-    r6: q89d
-
-neighbor_foreigners:
-  <<: *neighbors
-  description: >
-    For each of the following types of people, please tell me whether you would like having people
-    from this group as neighbors, dislike it, or not care:  Immigrants or foreign workers
-  variables:
-    r6: q89e
-
-national_or_ethnic_id:
-  type: string
-  description: >
-     Let us suppose that you had to choose between being a [ENTER NATIONALITY] and being a
-     ________ [R's Ethnic Group]. Which of the following best expresses your feelings?
-  ordered: true
-  patterns:
-    "\\[": "("
-    "\\]": ")"
-  mappings:
-    "National ID only": I feel only (national identity)
-    "National ID more than ethnic": I feel more (national identity) than (ethnic group)
-    "National and ethnic IDs equal": I feel equally (national identity) and (ethnic group)
-    "Ethnic ID more than national": I feel more (ethnic group) than (national identity)
-    "Ethnic ID only": I feel only (ethnic group)
-  constraints:
-    enum:
-    - I feel only (national identity)
-    - I feel more (national identity) than (ethnic group)
-    - I feel equally (national identity) and (ethnic group)
-    - I feel more (ethnic group) than (national identity)
-    - I feel only (ethnic group)
-  variables:
-    r6: q88b
-    r5: q85b
-    r4: q83
-    r3: q82
-
-trust_relatives:
-  <<: &trust
-    type: string
-    ordered: true
-    constraints:
-      enum:
-      - "Not at all"
-      - "Just a little"
-      - "Somewhat"
-      - "A lot"
-    missing:
-    - "Don't know"
-    - "Refused to answer"
-    - "Missing"
-    - "Don't know / Haven't heard enough"
-    - "Not applicable"
-  label: Trust relatives
-  description: >
-    How much do you trust each of the following types of people: Your relatives?
-  variables:
-    r3: q84a
-    r4: q84a
-    r5: q88a
-    r6: null
-
-trust_neighbors:
-  <<: *trust
-  label: Trust neighbors
-  description: >
-    How much do you trust each of the following types of people: Your neighbors?
-  variables:
-    r3: q84b
-    r4: null
-    r5: q88b
-    r6: null
-
-trust_own_ethnic:
-  <<: *trust
-  label: Trust people from own ethnic groups
-  description: >
-    How much do you trust each of the following types of people: People from your own ethnic group?
-  variables:
-    r3: q84c
-    r4: null
-    r5: null
-    r6: null
-
-trust_other_ethnic:
-  <<: *trust
-  description: "How much do you trust each of the following types of people: [Ghanaian/Kenyan/etc.] from other ethnic groups?"
-  label: "Trust people from other ethnic groups"
-  variables:
-    r3: q84d
-    r4: null
-    r5: null
-
-trust_known:
-  <<: *trust
-  label: Trust other people you know
-  description: >
-    How much do you trust each of the following types of people: Other people you know?
-  variables:
-    r3: null
-    r4: q84b
-    r5: q88c
-
-trust_other:
-  <<: *trust
-  label: Trust other
-  description: >
-    How much do you trust each of the following types of people: Other [Ghanaians/Kenyans/etc.]?
-  variables:
-    r3: null
-    r4: q84c
-    r5: null
-    r6: null
-
-trust_president:
-  <<: *trust
-  label: Trust the President
-  description: >
-    How much do you trust each of the following, or haven't you heard enough about them to say: The President/Prime Minister?
-  variables:
-    r3: q55a
-    r4: q49a
-    r5: q59a
-    r6: q52a
-
-trust_parliament:
-  <<: *trust
-  label: Trust Parliament/National Assembly
-  description: >
-    How much do you trust each of the following, or haven’t you heard enough about them to say: The Parliament/National Assembly?
-  variables:
-    r3: q55b
-    r4: q49b
-    r5: q59b
-    r6: q52b
-
-trust_electoral_commission:
-  <<: *trust
-  label: Trust the Electoral Commission
-  description: >
-    How much do you trust each of the following, or haven’t you heard enough about them to say: The Electoral Commission?
-  variables:
-    r3: q55c
-    r4: q49c
-    r5: q59c
-    r6: q52c
-
-trust_local_council:
-  <<: *trust
-  label: Trust your elected local government council
-  description: >
-    How much do you trust each of the following, or haven’t you heard enough about them to say: Your Elected Local Government Council?
-  variables:
-    r3: q55d
-    r4: q49d
-    r5: q59e
-    r6: q52e
-
-trust_ruling_party:
-  <<: *trust
-  label: Trust the Ruling Party
-  description: >
-    How much do you trust each of the following, or haven’t you heard enough about them to say: The Ruling Party?
-  variables:
-    r3: q55e
-    r4: q49e
-    r5: q59f
-    r6: q52f
-
-trust_opposition_parties:
-  <<: *trust
-  label: Trust opposition political parties
-  description: >
-    How much do you trust each of the following, or haven’t you heard enough about them to say: Opposition Political Parties?
-  variables:
-    r3: q55f
-    r4: q49f
-    r5: q59g
-    r6: q52g
-
-trust_military:
-  <<: *trust
-  label: Trust military
-  description: >
-    How much do you trust each of the following, or haven’t you heard enough about them to say: The Army?
-  variables:
-    r3: q55g
-    r4: null
-    r5: q59i
-    r6: q52i
-
-trust_police:
-  <<: *trust
-  label: Trust police
-  description: >
-    How much do you trust each of the following, or haven’t you heard enough about them to say: The Police?
-  variables:
-    r3: q55h
-    r4: q49g
-    r5: q59h
-    r6: q52h
-
-trust_courts:
-  <<: *trust
-  label: Trust courts of law
-  description: >
-    How much do you trust each of the following, or haven’t you heard enough about them to say: Courts of Law?
-  variables:
-    r3: q55i
-    r4: q49h
-    r5: q59j
-    r6: q52j
-
-trust_govt_broadcasting:
-  <<: *trust
-  label: Trust government broadcasting service
-  description: >
-    How much do you trust each of the following, or haven’t you heard enough about them to say: Government broadcasting service (GBC TV or radio)?
-  variables:
-    r3: q55j
-    r4: null
-    r5: null
-    r6: null
-
-trust_indep_broadcasting:
-  <<: *trust
-  label: Trust independent broadcasting service
-  description: >
-    How much do you trust each of the following, or haven’t you heard enough about them to say: Independent broadcasting service (e.g. TV3, FM radio)?
-  variables:
-    r3: q55k
-    r4: null
-    r5: null
-    r6: null
-
-trust_govt_newspapers:
-  <<: *trust
-  label: Trust government newspapers
-  description: >
-    How much do you trust each of the following, or haven’t you heard enough about them to say: Government newspapers (Graphic)?
-  variables:
-    r3: q55l
-    r4: null
-    r5: null
-    r6: null
-
-trust_indep_newspapers:
-  <<: *trust
-  label: Trust independent newspapers
-  description: >
-    How much do you trust each of the following, or haven’t you heard enough about them to say: Independent newspapers (e.g. Ghanian Chronicle, Indepnendent)?
-  variables:
-    r3: q55m
-    r4: null
-    r5: null
-    r6: null
-
-trust_traditional_leaders:
-  <<: *trust
-  label: Trust traditional leaders
-  description: >
-    How much do you trust each of the following, or haven’t you heard enough about them to say: Traditional leaders?
-  variables:
-    r3: null
-    r4: q49i
-    r5: null
-    r6: q52k
-
-trust_tax_department:
-  <<: *trust
-  label: Trust tax department
-  description: >
-    How much do you trust each of the following, or haven’t you heard enough about them to say: The Tax Department?
-  variables:
-    r3: null
-    r4: null
-    r5: q59d
-    r6: q52d
-
-trust_religious_leaders:
-  <<: *trust
-  label: Trust religious leaders
-  description: >
-    How much do you trust each of the following, or haven’t you heard enough about them to say: Religious leaders?
-  variables:
-    r3: null
-    r4: null
-    r5: null
-    r6: q52l
-
-respondent_friendly:
-  label: Respondent friendly
-  type: string
-  description: >
-    What was the respondent’s attitude toward you during the interview? Was he or she: friendly, in between, or hostile?
-  constraints:
-    enum:
-      - Friendly
-      - In between
-      - Hostile
-  ordered: true
-  missing:
-    - Missing
-  variables:
-    r3: q108a
-    r4: q108a
-    r5: q110a
-    r6: q110a
-
-respondent_interested:
-  label: Respondent interested
-  type: string
-  description: >
-    What was the respondent’s attitude toward you during the interview? Was he or she: interested, in between, or bored?
-  constraints:
-    enum:
-      - Interested
-      - In between
-      - Bored
-  ordered: true
-  missing:
-    - Missing
-  variables:
-    r3: q108b
-    r4: q108b
-    r5: q110b
-    r6: q110b
-
-respondent_cooperative:
-  label: Respondent cooperative
-  type: string
-  description: >
-    What was the respondent’s attitude toward you during the interview? Was he or she: cooperative, in between, or uncooperative?
-  constraints:
-    enum:
-      - Cooperative
-      - In between
-      - Uncooperative
-  ordered: true
-  missing:
-    - Missing
-  variables:
-    r3: q108c
-    r4: q108c
-    r5: q110c
-    r6: q110c
-
-respondent_patient:
-  label: Respondent patient
-  type: string
-  description: >
-    What was the respondent’s attitude toward you during the interview? Was he or she: patient, in between, or impatient?
-  constraints:
-    enum:
-      - Patient
-      - In between
-      - Impatient
-  ordered: true
-  missing:
-    - Missing
-  variables:
-    r3: q108d
-    r4: q108d
-    r5: q110d
-    r6: q110d
-
-respondent_ease:
-  label: Respondent at ease
-  type: string
-  description: >
-    What was the respondent’s attitude toward you during the interview? Was he or she: at ease, in between, or suspicious?
-  constraints:
-    enum:
-      - At ease
-      - In between
-      - Suspicious
-  ordered: true
-  missing:
-    - Missing
-  variables:
-    r3: q108e
-    r4: q108e
-    r5: q110e
-    r6: q110e
-
-respondent_honest:
-  label: Respondent honest
-  type: string
-  description: >
-    What was the respondent’s attitude toward you during the interview? Was he or she: honest, in between, or misleading?
-  constraints:
-    enum:
-      - Honest
-      - In between
-      - Misleading
-  ordered: true
-  missing:
-    - Missing
-  variables:
-    r3: q108f
-    r4: q108f
-    r5: q110f
-    r6: q110f
-
-leaders_representation:
-  <<: *binarychoice
-  label: Leaders treat all equally vs. help own community
-  description: >
-    Which of the following statements is closest to your view? Choose Statement A or Statement B.
-
-    A: Since leaders represent everyone, leaders should not favour their own family or group.
-    B: Once in office, leaders are obliged to help their home community.
-  variables:
-    r3: q21
-    r4: q17
-    r5: q18
-    r6: null
-
-
-respect_authority:
-  <<: *binarychoice
-  label: Question actions of leaders vs. respect authority
-  description: >
-    Let’s talk for a moment about the kind of society we would like to have in this country. Which of the following statements is closest to your view? Choose Statement A or Statement B.
-
-    A: As citizens, we should be more active in questioning the actions of our leaders.
-    B: In our country these days, we should show more respect for authority.
-
-  variables:
-    r3: q20
-    r4: q16
-    r5: null
-    r6: null
-
-ethnic_group_unfair:
-  type: string
-  constraints:
-    enum:
-      - Never
-      - Sometimes
-      - Often
-      - Always
-  missing:
-    - Not applicable
-    - Don't Know
-    - Refused
-    - Missing
-    - Not asked
-  label: Ethnic group treated unfairly
-  description: >
-    How often, if ever, are ___________s [R’s Ethnic Group] treated unfairly by the government?
-  variables:
-    r3: q81
-    r4: q82
-    r5: q85a
-    r6: q88a
-
-ethnic_group_econ:
-  type: string
-  constraints:
-    enum:
-      - Much Worse
-      - Worse
-      - Same
-      - Better
-      - Much Better
-  missing:
-    - Not applicable
-    - Don't Know
-    - Refused
-    - Missing
-    - Not asked
-  label: Ethnic group’s economic conditions
-  description: >
-    Think about the condition of ____________ [R’s Ethnic Group]. Are their economic conditions worse, the same as, or better than other groups in this country?
-  variables:
-    r3: q80a
-    r4: q80
-    r5: null
-    r6: null
-
-ethnic_group_political:
-  type: string
-  constraints:
-    enum:
-      - Much less
-      - Less
-      - Same
-      - More
-      - Much more
-  missing:
-    - Not applicable
-    - Don't Know
-    - Refused
-    - Missing
-    - Not asked
-  label: Ethnic group’s political influence
-  description: >
-    Think about the condition of ____________ [R’s Ethnic Group]. Do they have less, the same, or more influence in politics than other groups in this country?
-  variables:
-    r3: q80b
-    r4: q81
-    r5: null
-    r6: null
-
-languages_spoken:
-  type: string
-  lower: true
-  description: >
-    What languages do you speak well (verbatim)
-  variables:
-    r3: null
-    r4: q88e
-    r5: null
-    r6: null
-
-languages_number:
-  type: integer
-  label: Number of languages
-  missing:
-    - Don't know
-    - Refused
-    - Missing
-  description: >
-    What languages do you speak well?
-  variables:
-    r3: null
-    r4: q88f
-    r5: null
-    r6: null
-
-others_present:
-  type: string
-  label: Others present
-  mappings:
-    Spouse: Spouse only
-    Children Only: Children only
-  constraints:
-    enum:
-    - No one
-    - Spouse only
-    - Children only
-    - A few others
-    - Small crowd
-  missing:
-    - Missing Data
-  variables:
-    r3: q104
-    r4: q104
-    r5: q106
-    r6: q106
-
-house_water_source:
-  type: string
-  label: Source of water for household use
-  description: >
-    Please tell me whether each of the following are available inside your house, inside your compound, or outside your compound: your main source of water for household use?
-  constraints:
-    ordered: true
-    enum:
-    - Inside the house
-    - Inside the compound
-    - Outside the compound
-  missing:
-    - Missing
-    - Refused
-    - Don't know
-  variables:
-    r3: null
-    r4: q93a
-    r5: q95a
-    r6: q93a
-
-house_toilet:
-  type: string
-  label: Location of toilet or latrine
-  description: >
-    Please tell me whether each of the following are available inside your house, inside your compound, or outside your compound: A toilet or latrine
-  mappings:
-    No latrine: None, no latrine available
-  constraints:
-    enum:
-    - None, no latrine available
-    - Inside the house
-    - Inside the compound
-    - Outside the compound
-  missing:
-    - Missing
-    - Refused
-    - Don't know
-  variables:
-    r3: null
-    r4: null
-    r5: q95b
-    r6: q93b
-
-
-religion_cond:
-  type: string
-  description: Respondent's religion (binned)
-  comment: >
-    This is similar to the `RELIG_COND` variable in round 6, but applied to
-    all rounds. The `RELIG_COND` is also not consistent within defitions.
-  mappings:
-    African Abraham: Christian
-    African Abraham Church: Christian
-    African Apostolic Faith: Christian
-    African Independent Church: Christian
-    African Inland Church: Christian
-    African International: Christian
-    Agnostic: None
-    Agnostic (Do not know if there is a God): None
-    Agnostic(Do not know if there is a God): None
-    Alliance Chretienne et Missionnaire: Christian
-    Anglican: Christian
-    Ansardine Brotherhood: Muslim
-    Apostolic: Christian
-    Apostolic Church: Christian
-    Apostolic Faith/New_United: Christian
-    Assemblies of God: Christian
-    Assembly of God: Christian
-    Atheist: None
-    Atheist (Do not believe in a God): None
-    Atheist(Do not believe in a God): None
-    Bahai: Other
-    Baptist: Christian
-    Bashariya Mission: Muslim
-    Bible Believers: Christian
-    Brethren in Christ: Christian
-    Buddhist: Other
-    Calvinist: Christian
-    Calviniste (FJKM): Christian
-    Catholic: Christian
-    Celestial Christianity: Christian
-    Christian (general/other): Christian
-    Christian Missions in Many Lands: Christian
-    Christian only: Christian
-    Christian Rationalism: Christian
-    Christianisme Celeste: Christian
-    Church of Christ: Christian
-    CMA: Christian
-    CMML: Christian
-    Confr Arie de la Hamadiya (Hamalite): Muslim
-    Confr Arie de la Trabiya: Muslim
-    Confr Arie de la Wahhabiya (Wahhabite): Muslim
-    Confr Arie des Lay anes(brotherhood): Muslim
-    Confrerie de la Hamadiya (Hamalite): Muslim
-    Confrerie de la Trabiya: Muslim
-    Coptic: Christian
-    Covenant Church: Christian
-    Dutch Reform: Christian
-    Dutch Reformed: Christian
-    Dutch Reformed (e.g. NGK,NHK,GK,Mission,APK,URC): Christian
-    Don't know: null
-    Emmanuel: Christian
-    Evangelical: Christian
-    Faith Apostolic: Christian
-    Hamalite / Chérif de Nioro Brotherhood: Muslim
-    Harriste: Christian
-    Hindu: Other
-    Hisbulah Mission: Muslim
-    Ibadi: Muslim
-    Independent: Christian
-    IPCC: Christian
-    Ismaeli: Muslim
-    Izala: Muslim
-    Jehovah's Witness: Christian
-    Jewish: Other
-    Johanne Masowe: Other
-    Last Church: Christian
-    Last Church of God: Christian
-    Last Church/Reform: Christian
-    Layene: Muslim
-    Lutheran: Christian
-    Marathi: Other
-    Mennonite: Christian
-    Methodist: Christian
-    Mormon: Christian
-    Mouridiya Brotherhood: Muslim
-    Muslim (general/other): Muslim
-    Muslim khadre: Muslim
-    Muslim Layène: Muslim
-    Muslim Mouride: Muslim
-    Muslim only: Muslim
-    Muslim Tijane: Muslim
-    Muslim, Shiite: Muslim
-    Muslim, Sunni: Muslim
-    Nationality: Nationality
-    Nazaren: Christian
-    Nazaren Church: Christian
-    Nazareth Church: Christian
-    New Apostolic Church: Christian
-    NG Kerk: Christian
-    None: None
-    NOT ASKED IN THIS COUNTRY: null
-    Old Apostolic: Christian
-    Orthodox: Christian
-    Other: Other
-    Other Christian (Moravian): Christian
-    Pentecostal: Christian
-    Presbyterian: Christian
-    Protestant (Evangelical/Pentecostal): Christian
-    Protestant (Mainstream): Christian
-    Qadiriya Brotherhood: Muslim
-    Quaker / Friends: Christian
-    Quaker/Friends: Christian
-    Reformed Church in Zimbabwe: Christian
-    Rhema: Christian
-    Roman Catholic: Christian
-    Salvation Army: Christian
-    Seventh Day Adventist: Christian
-    Shia: Muslim
-    Shia only: Muslim
-    Sidya: Muslim
-    St John Apostolic: Christian
-    Sukuti: Muslim
-    Sunni only: Muslim
-    Tamil: Other
-    Telegu: Other
-    Tijaniya Brotherhood: Muslim
-    Toby Betela: Other
-    Topia: Christian
-    Traditional / ethnic religion: Other
-    Traditional religion: Other
-    Traditional/ethnic religion: Other
-    Twelve Apostles: Christian
-    UCCSA: Christian
-    United Church: Christian
-    United Church of Zambia: Christian
-    United Church of Zamia: Christian
-    Utopia Church: Christian
-    Vahao ny Oloko: Christian
-    Voice of unity/unity of christ/faith of unity: Christian
-    Wahhabiya Brotherhood: Muslim
-    Zaoga: Christian
-    ZCC: Christian
-    Zion: Christian
-    Zionist Christian Church: Christian
-  variables:
-    r6: Q98A
-    r5: Q98A
-    r4: Q90
-    r3: Q91
-    r2: Q85
+#
+# age:
+#   description: Respondent's age
+#   type: factor
+#   constraints:
+#     minimum: 0
+#   variables:
+#     r6: q1
+#     r5: q1
+#     r4: q1
+#     r3: q1
+#     r2: Q80
+#
+# gender:
+#   description: Respondent's gender
+#   type: factor
+#   levels:
+#     allow_na: false
+#     levels:
+#     - Male
+#     - Female
+#   variables:
+#     r6: Q101
+#     r5: Q101
+#     r4: Q101
+#     r3: Q101
+#     r2: Q96
+#
+# respondent_language:
+#   description: Home language of the respondent
+#   type: string
+#   lower: true
+#   variables:
+#     r6: q2
+#     r5: q2
+#     r4: q3
+#     r3: q3
+#     r2: q83
+#
+# respondent_language_other:
+#   description: Home language of the respondent,
+#     open-ended response if they answered "OTHER".
+#   patterns:
+#     "^$": .na.character
+#   lower: true
+#   type: string
+#   variables:
+#     r6: q2other
+#     r5: q2other
+#     r4: q3other
+#
+# race:
+#   description: Respondent's race
+#   type: string
+#   mappings:
+#     "Coloured / Mixed Race": "Coloured / Mixed race"
+#     # madagascar in R3
+#     "240": "Missing"
+#   constraints:
+#     enum:
+#     - "Arab/Lebanese/North African"
+#     - "Black/African"
+#     - "Coloured/Mixed race"
+#     - "East Asian (Chinese, Korean, Indonesian, etc.)"
+#     - "South Asian (Indian, Pakistani, etc.)"
+#     - "White/European"
+#     - "Other"
+#   variables:
+#     r6: Q102
+#     r5: Q102
+#     r4: Q102
+#     r3: Q102
+#     r2: Q96NEW
+#
+# religion:
+#   type: string
+#   description: Respondent's religion
+#   lower: true
+#   mappings:
+#     African Abraham: African Abraham Church
+#     African Abraham Church: African Abraham Church
+#     African Apostolic Faith: African Apostolic Faith
+#     African Independent Church: African Independent Church
+#     African Inland Church: African Inland Church
+#     African International: African International
+#     Agnostic: Agnostic
+#     Agnostic (Do not know if there is a God): Agnostic
+#     Agnostic(Do not know if there is a God): Agnostic
+#     Alliance Chretienne et Missionnaire: Christian and Missionary Alliance
+#     Anglican: Anglican
+#     Ansardine Brotherhood: Ansardine Brotherhood
+#     Apostolic: Apostolic Church
+#     Apostolic Church: Apostolic Church
+#     Apostolic Faith/New_United: Apostolic Faith/New United
+#     Assemblies of God: Assemblies of God
+#     Assembly of God: Assemblies of God
+#     Atheist: Atheist
+#     Atheist (Do not believe in a God): Atheist
+#     Atheist(Do not believe in a God): Atheist
+#     Bahai: Bahai
+#     Baptist: Baptist
+#     Bashariya Mission: Bashariya Mission
+#     Bible Believers: Bible Believers
+#     Brethren in Christ: Brethren in Christ
+#     Buddhist: Buddhist
+#     Calvinist: Calvinist
+#     Calviniste (FJKM): Calvinist
+#     Catholic: Catholic
+#     Celestial Christianity: Celestial Christianity
+#     Christian (general/other): Christian (general/other)
+#     Christian Missions in Many Lands: Christian Missions in Many Lands
+#     Christian only: Christian
+#     Christian Rationalism: Christian Rationalism
+#     Christianisme Celeste: Celestial Christianity
+#     Church of Christ: Church of Christ
+#     CMA: Christian and Missionary Alliance
+#     CMML: Christian Missions in Many Lands
+#     Confr Arie de la Hamadiya (Hamalite): Hamadiya Brotherhood
+#     Confr Arie de la Trabiya: Trabiya Brotherhood
+#     Confr Arie de la Wahhabiya (Wahhabite): Wahhabiya Brotherhood
+#     Confr Arie des Lay anes(brotherhood): Layene
+#     Confrerie de la Hamadiya (Hamalite): Hamadiya Brotherhood
+#     Confrerie de la Trabiya: Trabiya Brotherhood
+#     Coptic: Coptic
+#     Covenant Church: Covenant Church
+#     Dutch Reform: Dutch Reformed
+#     Dutch Reformed: Dutch Reformed
+#     Dutch Reformed (e.g. NGK,NHK,GK,Mission,APK,URC): Dutch Reformed
+#     Don't know: "Don't Know"
+#     Emmanuel: Emmanuel
+#     Evangelical: Evangelical
+#     Faith Apostolic: Faith Apostolic
+#     Hamalite/Cherif de Nioro Brotherhood: Hamadiya Brotherhood
+#     Harriste: Harrist Church
+#     Hindu: Hindu
+#     Hisbulah Mission: Hisbulah Mission
+#     Ibadi: Ibadi
+#     Independent: African Independent Church
+#     IPCC: International Pentecostal Church of Christ
+#     Ismaeli: Ismaeli
+#     Izala: Izala
+#     Jehovah's Witness: Jehovah's Witness
+#     Jewish: Jewish
+#     Johanne Masowe: Johanne Masowe
+#     Last Church: Last Church of God
+#     Last Church of God: Last Church of God
+#     Last Church/Reform: Last Church of God
+#     Layene: Layene
+#     Lutheran: Lutheran
+#     Marathi: Marathi
+#     Mennonite: Mennonite
+#     Methodist: Methodist
+#     Mormon: Mormon
+#     Mouridiya Brotherhood: Mouridiya Brotherhood
+#     Muslim (general/other): Muslim
+#     Muslim khadre: Muslim Khadre
+#     Muslim Layene: Layene
+#     Muslim Mouride: Mouridiya Brotherhood
+#     Muslim only: Muslim
+#     Muslim Tijane: Tijaniya Brotherhood
+#     Muslim, Shiite: Muslim, Shiite
+#     Muslim, Sunni: Muslim, Sunni
+#     Nationality: Nationality
+#     Nazaren: Nazareth Church
+#     Nazaren Church: Nazareth Church
+#     Nazareth Church: Nazareth Church
+#     New Apostolic Church: New Apostolic Church
+#     NG Kerk: Dutch Reformed
+#     None: None
+#     NOT ASKED IN THIS COUNTRY: Not asked in country
+#     Old Apostolic: Old Apostolic
+#     Orthodox: Orthodox Christian
+#     Other: Other
+#     Other Christian (Moravian): Other Christian (Moravian)
+#     Pentecostal: Pentecostal
+#     Presbyterian: Presbyterian
+#     Protestant (Evangelical/Pentecostal): Protestant (Evangelical/Pentecostal)
+#     Protestant (Mainstream): Protestant (Mainstream)
+#     Qadiriya Brotherhood: Qadiriya Brotherhood
+#     Quaker/Friends: Quaker/Friends
+#     Reformed Church in Zimbabwe: Reformed Church in Zimbabwe
+#     Rhema: Rhema
+#     Roman Catholic: Catholic
+#     Salvation Army: Salvation Army
+#     Seventh Day Adventist: Seventh Day Adventist
+#     Shia: Shia
+#     Shia only: Shia
+#     Sidya: Sidya
+#     St John Apostolic: St John Apostolic
+#     Sukuti: Sukuti
+#     Sunni only: Sunni
+#     Tamil: Tamil
+#     Telegu: Telegu
+#     Tijaniya Brotherhood: Tijaniya Brotherhood
+#     Toby Betela: Toby Betela
+#     Topia: Topia
+#     Traditional / ethnic religion: Traditional / ethnic religion
+#     Traditional religion: Traditional / ethnic religion
+#     Traditional/ethnic religion: Traditional / ethnic religion
+#     Twelve Apostles: Twelve Apostles
+#     UCCSA: United Congregational Church of Southern Africa
+#     United Church: United Church of Zambia
+#     United Church of Zambia: United Church of Zambia
+#     United Church of Zamia: United Church of Zambia
+#     Utopia Church: Utopia Church
+#     Vahao ny Oloko: Vahao ny Oloko
+#     Voice of unity/unity of christ/faith of unity: Voice of unity/Unity of Christ/Faith  of Unity
+#     Wahhabiya Brotherhood: Wahhabiya Brotherhood
+#     Zaoga: Zaoga
+#     ZCC: Zionist Christian Church
+#     Zion: Zionist Christian Church
+#     Zionist Christian Church: Zionist Christian Church
+#   variables:
+#     r6: Q98A
+#     r5: Q98A
+#     r4: Q90
+#     r3: Q91
+#     r2: Q85
+#
+#
+# religiosity_attendence:
+#   description: >
+#     People practice their religion in different ways. Aside from weddings and funerals, how often do
+#     you personally engage in religious practices like prayer, reading a religious book, or attending a religious
+#     service or a meeting of a religious group? Would you say you do so:
+#   type: string
+#   mappings:
+#     "Respondent has no religion": "Not applicable"
+#   ordered: false
+#   constraints:
+#     enum:
+#       - Never
+#       - "About once a year or less"
+#       - A few times a year
+#       - "About once every several months"
+#       - About once a month
+#       - About once a week
+#       - A few times a week
+#       - "More than once a week"
+#       - About once a day
+#       - More than once a day
+#   comment: >
+#     R3 has different categories than latter rounds. Actual use would
+#     require reconciling these categories.
+#   variables:
+#     r6: q98b
+#     r5: null
+#     r4: null
+#     r3: Q92
+#     r2: Q86
+#
+# religiosity_importance:
+#   description: >
+#      How important is religion in your life?
+#   type: string
+#   missing:
+#     - Refused
+#     - Missing
+#     - Don't know
+#   mappings:
+#     Refused to answer: Refused
+#   constraints:
+#     enum:
+#       - Not at all important
+#       - Somewhat important
+#       - Very important
+#       - Not very important
+#   ordered: true
+#   variables:
+#     r5: q98b
+#     r4: q91
+#
+# education:
+#   type: string
+#   # it's not exactly ordered
+#   ordered: false
+#   constraints:
+#     enum:
+#     - No formal schooling
+#     - Some primary schooling
+#     - Informal schooling only
+#     - Primary school completed
+#     - Some secondary school / high school
+#     - Secondary school / high school completed
+#     - Post-secondary qualifications, other than university
+#     - Post-secondary qualifications
+#     - Some university
+#     - University completed
+#     - Post-graduate
+#   missing:
+#     - Missing
+#     - Don't know
+#     - Refused
+#   mappings:
+#     Secondary school completed / high school: "Secondary school / high school completed"
+#     No formal schooling: No formal schooling
+#     Some primary schooling: Some primary schooling
+#     Some secondary school / high school: Some secondary school / high school
+#     Some university: Some university
+#     Primary school completed: Primary school completed
+#     University completed: University completed
+#     Post-secondary qualifications, not university: "Post-secondary qualifications, other than university"
+#     Post-graduate: Post-graduate
+#     Informal schooling only: Informal schooling only
+#     Secondary school / high school completed: Secondary school / high school completed
+#     Post-secondary qualifications, other than university: Post-secondary qualifications,
+#       other than university
+#   variables:
+#     r6: Q97
+#     r5: Q97
+#     r4: Q89
+#     r3: Q90
+#     r2: Q84
+#
+# occupation:
+#   description: "Respondent's occupation"
+#   type: string
+#   constraints:
+#     enum:
+#       - Agriculture / farming / fishing / forestry
+#       - Artisan or skilled manual worker
+#       - Businessperson (own business, 10 or more)
+#       - Businessperson (own business, less than 10)
+#       - Businessperson (works for others)
+#       - Clerical or secretarial
+#       - Disabled
+#       - Domestic worker / maid
+#       - Government worker
+#       - Housewife / homemaker
+#       - Mid-level professional
+#       - Miner
+#       - Never had a job
+#       - Other
+#       - Professional worker
+#       - Retired
+#       - Student
+#       - Security services
+#       - Trader / hawker / vendor
+#       - Teacher
+#       - Retail / shop
+#       - Supervisor / foreman / senior manager
+#       - Unemployed
+#       - Unskilled manual worker
+#       - Upper-level professional
+#   mappings:
+#     Artisan / skilled, formal sector: Artisan or skilled manual worker
+#     Artisan / skilled, informal sector: Artisan or skilled manual worker
+#     Housewife / work in household: Housewife / homemaker
+#     Retail worker: Retail / shop
+#     Trader / Hawker / Vendor: Trader / hawker / vendor
+#     Unskilled manual, formal sector: Unskilled manual worker
+#     Unskilled manual, informal sector: Unskilled manual worker
+#     Supervisor / Foreman: Supervisor / foreman / senior manager
+#     Police / Security / Military: Security services
+#     Subsistence farmer (own consumption only): Agriculture / farming / fishing / forestry
+#     Peasant farmer (own consumption and sale): Agriculture / farming / fishing / forestry
+#     Pastoralist / herder / raise livestock: Agriculture / farming / fishing / forestry
+#     Fisherman: Agriculture / farming / fishing / forestry
+#     Farm worker: Agriculture / farming / fishing / forestry
+#     Commercial farmer (mainly for sale): Agriculture / farming / fishing / forestry
+#     Retail / Shop: Retail / shop
+#     Supervisor / Foreman / Senior Manager: Supervisor / foreman / senior manager
+#   variables:
+#     r6: Q96A
+#     r5: null
+#     r4: null
+#     r3: Q95
+#     r2: Q88
+#
+# ethnicity:
+#   description: "Respondent's ethnicity"
+#   type: string
+#   lower: true
+#   patterns:
+#     ""
+#   mappings:
+#     "Refused to answer": Refused
+#     "Not asked": "Not asked in country"
+#     "zarrma / songhai": "zarma / songhai"
+#     "yalumka": "yalunka"
+#     "white": "white / european"
+#     "soninke / sarakoll": "soninke / sarakole"
+#     "soninke / sarakolle": "soninke / sarakole"
+#     "sotho / south sotho": "sesotho / sotho / south sotho"
+#     "senoufo": "senufo"
+#     "sonink": "soninke"
+#     "related to island originin": "related to island origin"
+#     "portugais": "portuguese"
+#     "peulh / fulfude": "peulh / fulfulde"
+#     "peuhl / fulfuld": "peulh / fulfulde"
+#     "peul": "peulh"
+#     "peule": "peulh"
+#     "peuhl": "peulh"
+#     "pedi / north sotho": "pedi / spedi / north sotho"
+#     "others": "other"
+#     "national id only or 'doesn't think of self in those terms'": "national identity only"
+#     "national identity only, or 'doesnt think of self in those terms'": "national identity only"
+#     "national identity only, or \"doesn't think of self in those terms\"": "national identity only"
+#     "amerivan or european": "american or european"
+#     "afrikaaner": "afrikaner"
+#   variables:
+#     r6: Q87
+#     r5: Q84
+#     r4: Q79
+#     r3: Q79
+#     r2: null
+#
+# shelter_type:
+#   type: string
+#   missing:
+#   - Missing
+#   ordered: false
+#   constraints:
+#     enum:
+#     - Flat in a block of flats
+#     - Hostel in an industrial compound or farming compound
+#     - Non-traditional / formal house
+#     - Other
+#     - Room in a hotel, or a residential hotel
+#     - Single room in a larger dwelling structure or backyard
+#     - Temporary structure / shack
+#     - Traditional house / hut
+#   variables:
+#     r6: Q104
+#     r5: Q104
+#     r4: null
+#     r3: null
+#     r2: Q98
+#
+# roof_type:
+#   type: string
+#   constraints:
+#     enum:
+#     - Asbestos
+#     - Concrete
+#     - Metal, tin or zinc
+#     - Multiple materials
+#     - Plastic sheets
+#     - Shingles
+#     - Some other material
+#     - Thatch or grass
+#     - Tiles
+#   mappings:
+#     Asbestos: Asbestos
+#     Concrete: Concrete
+#     "Could not tell / could not see": "Missing"
+#     Metal, tin or zinc: Metal, tin or zinc
+#     Missing: Missing
+#     Multiple materials: Multiple materials
+#     Plastic sheets: Plastic sheets
+#     Shingles: Shingles
+#     Some other material: Some other material
+#     Thatch or grass: Thatch or grass
+#     Tiles: Tiles
+#   missing:
+#   - "Could not tell / could not see"
+#   - "Missing"
+#   variables:
+#     r6: Q105
+#     r5: Q105
+#
+# lpi_food:
+#   description: Gone without food
+#   type: string
+#   missing:
+#   - Don't know
+#   - Missing
+#   ordered: true
+#   constraints:
+#     enum:
+#     - Always
+#     - Many times
+#     - Several times
+#     - Just once or twice
+#     - Never
+#   variables:
+#     r6: Q8A
+#     r5: Q8A
+#     r4: Q8A
+#     r3: Q8A
+#     r2: Q9A
+#
+# lpi_water:
+#   type: string
+#   missing:
+#   - Don't Know
+#   - Missing
+#   ordered: true
+#   constraints:
+#     enum:
+#     - Always
+#     - Many times
+#     - Several times
+#     - Just once or twice
+#     - Never
+#   description: Gone without water
+#   variables:
+#     r6: Q8B
+#     r5: Q8B
+#     r4: Q8B
+#     r3: Q8B
+#     r2: Q9B
+#
+# lpi_medical:
+#   <<: &lpi
+#     type: string
+#     missing:
+#     - Don't know
+#     - Missing
+#     ordered: true
+#     constraints:
+#       enum:
+#       - Always
+#       - Many times
+#       - Several times
+#       - Just once or twice
+#       - Never
+#     description: Gone without medical care
+#   variables:
+#     r6: Q8C
+#     r5: Q8C
+#     r4: Q8C
+#     r3: Q8C
+#     r2: Q9C
+#
+# lpi_fuel:
+#   <<: *lpi
+#   description: Gone without enough fuel
+#   variables:
+#     r6: Q8D
+#     r5: Q8D
+#     r4: Q8D
+#     r3: Q8D
+#     r2: Q9E
+#
+# lpi_cash:
+#   <<: *lpi
+#   description: Gone without cash income
+#   variables:
+#     r6: Q8E
+#     r5: Q8E
+#     r4: Q8E
+#     r3: Q8E
+#     r2: Q9F
+#
+# women_leaders:
+#   <<: &binarychoice
+#     type: string
+#     missing:
+#     - "Don't know"
+#     - "Missing"
+#     - "Refused"
+#     mappings:
+#       Agree very strongly with A: "Agree very strongly with 1"
+#       Agree with A: "Agree with 1"
+#       Agree with B: "Agree with 2"
+#       Agree very strongly with B: "Agree very strongly with 2"
+#     ordered: true
+#     constraints:
+#       enum:
+#       - Agree very strongly with 1
+#       - Agree with 1
+#       - Agree with neither
+#       - Agree with 2
+#       - Agree very strongly with 2
+#   description: Men only as leaders vs. women leaders ok
+#   variables:
+#     r6: Q18
+#     r5: Q22
+#     r4: null
+#     r3: Q24
+#     r2: null
+#
+# living_conditions:
+#   description: >
+#     In general, how would you describe: Your own present living conditions?
+#   type: string
+#   mappings:
+#     Fairly Good: Fairly good
+#     Very Bad: Very bad
+#   ordered: true
+#   constraints:
+#     enum:
+#     - Very bad
+#     - Fairly bad
+#     - Neither good nor bad
+#     - Fairly good
+#     - Very good
+#   variables:
+#     r6: q4b
+#     r5: q3b
+#     r4: q4b
+#     r3: q4b
+#     r2: q1b
+#
+# women_equal_rights:
+#   <<: *binarychoice
+#   description: Women have equal rights vs. subject to traditional laws
+#   variables:
+#     r6: null
+#     r5: Q23
+#     r4: null
+#     r3: Q23
+#     r2: Q67
+#
+# girls_education:
+#   <<: *binarychoice
+#   description: >
+#     Education recipient priority: boy vs ability
+#   variables:
+#     r6: null
+#     r5: Q24
+#     r4: null
+#     r3: null
+#     r2: null
+#
+# generalized_trust:
+#   description: >
+#     Generally speaking, would you say that most people can be trusted or that you must be very careful in
+#     dealing with people?
+#   type: string
+#   mappings:
+#   "Missing data": "Missing"
+#   missing:
+#   - "Don't know"
+#   - "Missing"
+#   ordered: true
+#   constraints:
+#     enum:
+#     - "You must be very careful"
+#     - "Most people can be trusted"
+#   variables:
+#     r3: q83
+#
+# neighbor_diff_religion:
+#   description: >
+#     For each of the following types of people, please tell me whether you would like having people
+#     from this group as neighbors, dislike it, or not care: People of different religion
+#   <<: &neighbors
+#     type: string
+#     ordered: true
+#     mappings:
+#       Not asked in this country: Not asked in country
+#     missing:
+#       - Missing
+#       - Don't know
+#       - Not asked in country
+#     constraints:
+#       enum:
+#       - Strongly dislike
+#       - Somewhat dislike
+#       - Would not care
+#       - Somewhat like
+#       - Strongly like
+#   variables:
+#     r6: q89a
+#
+# neighbor_diff_ethnic:
+#   <<: *neighbors
+#   description: >
+#     For each of the following types of people, please tell me whether you would like having people
+#     from this group as neighbors, dislike it, or not care: People from other ethnic groups.
+#   variables:
+#     r6: q89b
+#
+# neighbor_homosexual:
+#   <<: *neighbors
+#   description: >
+#     For each of the following types of people, please tell me whether you would like having people
+#     from this group as neighbors, dislike it, or not care: Homosexuals.
+#   variables:
+#     r6: q89c
+#
+# neighbor_has_hiv:
+#   <<: *neighbors
+#   description: >
+#     For each of the following types of people, please tell me whether you would like having people
+#     from this group as neighbors, dislike it, or not care: People who have HIV/AIDS
+#   variables:
+#     r6: q89d
+#
+# neighbor_foreigner:
+#   <<: *neighbors
+#   description: >
+#     For each of the following types of people, please tell me whether you would like having people
+#     from this group as neighbors, dislike it, or not care:  Immigrants or foreign workers
+#   variables:
+#     r6: q89e
+#
+# national_or_ethnic_id:
+#   type: string
+#   description: >
+#      Let us suppose that you had to choose between being a [ENTER NATIONALITY] and being a
+#      ________ [R's Ethnic Group]. Which of the following best expresses your feelings?
+#   ordered: true
+#   patterns:
+#     "\\[": "("
+#     "\\]": ")"
+#   mappings:
+#     "National ID only": I feel only (national identity)
+#     "National ID more than ethnic": I feel more (national identity) than (ethnic group)
+#     "National and ethnic IDs equal": I feel equally (national identity) and (ethnic group)
+#     "Ethnic ID more than national": I feel more (ethnic group) than (national identity)
+#     "Ethnic ID only": I feel only (ethnic group)
+#   constraints:
+#     enum:
+#     - I feel only (national identity)
+#     - I feel more (national identity) than (ethnic group)
+#     - I feel equally (national identity) and (ethnic group)
+#     - I feel more (ethnic group) than (national identity)
+#     - I feel only (ethnic group)
+#   variables:
+#     r6: q88b
+#     r5: q85b
+#     r4: q83
+#     r3: q82
+#
+# trust_relatives:
+#   <<: &trust
+#     type: string
+#     ordered: true
+#     constraints:
+#       enum:
+#       - "Not at all"
+#       - "Just a little"
+#       - "Somewhat"
+#       - "A lot"
+#     missing:
+#     - "Don't know"
+#     - "Refused to answer"
+#     - "Missing"
+#     - "Don't know / Haven't heard enough"
+#     - "Not applicable"
+#   label: Trust relatives
+#   description: >
+#     How much do you trust each of the following types of people: Your relatives?
+#   variables:
+#     r3: q84a
+#     r4: q84a
+#     r5: q88a
+#     r6: null
+#
+# trust_neighbors:
+#   <<: *trust
+#   label: Trust neighbors
+#   description: >
+#     How much do you trust each of the following types of people: Your neighbors?
+#   variables:
+#     r3: q84b
+#     r4: null
+#     r5: q88b
+#     r6: null
+#
+# trust_own_ethnic:
+#   <<: *trust
+#   label: Trust people from own ethnic groups
+#   description: >
+#     How much do you trust each of the following types of people: People from your own ethnic group?
+#   variables:
+#     r3: q84c
+#     r4: null
+#     r5: null
+#     r6: null
+#
+# trust_other_ethnic:
+#   <<: *trust
+#   description: "How much do you trust each of the following types of people: [Ghanaian/Kenyan/etc.] from other ethnic groups?"
+#   label: "Trust people from other ethnic groups"
+#   variables:
+#     r3: q84d
+#     r4: null
+#     r5: null
+#
+# trust_known:
+#   <<: *trust
+#   label: Trust other people you know
+#   description: >
+#     How much do you trust each of the following types of people: Other people you know?
+#   variables:
+#     r3: null
+#     r4: q84b
+#     r5: q88c
+#
+# trust_other:
+#   <<: *trust
+#   label: Trust other
+#   description: >
+#     How much do you trust each of the following types of people: Other [Ghanaians/Kenyans/etc.]?
+#   variables:
+#     r3: null
+#     r4: q84c
+#     r5: null
+#     r6: null
+#
+# trust_president:
+#   <<: *trust
+#   label: Trust the President
+#   description: >
+#     How much do you trust each of the following, or haven't you heard enough about them to say: The President/Prime Minister?
+#   variables:
+#     r3: q55a
+#     r4: q49a
+#     r5: q59a
+#     r6: q52a
+#
+# trust_parliament:
+#   <<: *trust
+#   label: Trust Parliament/National Assembly
+#   description: >
+#     How much do you trust each of the following, or haven’t you heard enough about them to say: The Parliament/National Assembly?
+#   variables:
+#     r3: q55b
+#     r4: q49b
+#     r5: q59b
+#     r6: q52b
+#
+# trust_electoral_commission:
+#   <<: *trust
+#   label: Trust the Electoral Commission
+#   description: >
+#     How much do you trust each of the following, or haven’t you heard enough about them to say: The Electoral Commission?
+#   variables:
+#     r3: q55c
+#     r4: q49c
+#     r5: q59c
+#     r6: q52c
+#
+# trust_local_council:
+#   <<: *trust
+#   label: Trust your elected local government council
+#   description: >
+#     How much do you trust each of the following, or haven’t you heard enough about them to say: Your Elected Local Government Council?
+#   variables:
+#     r3: q55d
+#     r4: q49d
+#     r5: q59e
+#     r6: q52e
+#
+# trust_ruling_party:
+#   <<: *trust
+#   label: Trust the Ruling Party
+#   description: >
+#     How much do you trust each of the following, or haven’t you heard enough about them to say: The Ruling Party?
+#   variables:
+#     r3: q55e
+#     r4: q49e
+#     r5: q59f
+#     r6: q52f
+#
+# trust_opposition_parties:
+#   <<: *trust
+#   label: Trust opposition political parties
+#   description: >
+#     How much do you trust each of the following, or haven’t you heard enough about them to say: Opposition Political Parties?
+#   variables:
+#     r3: q55f
+#     r4: q49f
+#     r5: q59g
+#     r6: q52g
+#
+# trust_military:
+#   <<: *trust
+#   label: Trust military
+#   description: >
+#     How much do you trust each of the following, or haven’t you heard enough about them to say: The Army?
+#   variables:
+#     r3: q55g
+#     r4: null
+#     r5: q59i
+#     r6: q52i
+#
+# trust_police:
+#   <<: *trust
+#   label: Trust police
+#   description: >
+#     How much do you trust each of the following, or haven’t you heard enough about them to say: The Police?
+#   variables:
+#     r3: q55h
+#     r4: q49g
+#     r5: q59h
+#     r6: q52h
+#
+# trust_courts:
+#   <<: *trust
+#   label: Trust courts of law
+#   description: >
+#     How much do you trust each of the following, or haven’t you heard enough about them to say: Courts of Law?
+#   variables:
+#     r3: q55i
+#     r4: q49h
+#     r5: q59j
+#     r6: q52j
+#
+# trust_govt_broadcasting:
+#   <<: *trust
+#   label: Trust government broadcasting service
+#   description: >
+#     How much do you trust each of the following, or haven’t you heard enough about them to say: Government broadcasting service (GBC TV or radio)?
+#   variables:
+#     r3: q55j
+#     r4: null
+#     r5: null
+#     r6: null
+#
+# trust_indep_broadcasting:
+#   <<: *trust
+#   label: Trust independent broadcasting service
+#   description: >
+#     How much do you trust each of the following, or haven’t you heard enough about them to say: Independent broadcasting service (e.g. TV3, FM radio)?
+#   variables:
+#     r3: q55k
+#     r4: null
+#     r5: null
+#     r6: null
+#
+# trust_govt_newspapers:
+#   <<: *trust
+#   label: Trust government newspapers
+#   description: >
+#     How much do you trust each of the following, or haven’t you heard enough about them to say: Government newspapers (Graphic)?
+#   variables:
+#     r3: q55l
+#     r4: null
+#     r5: null
+#     r6: null
+#
+# trust_indep_newspapers:
+#   <<: *trust
+#   label: Trust independent newspapers
+#   description: >
+#     How much do you trust each of the following, or haven’t you heard enough about them to say: Independent newspapers (e.g. Ghanian Chronicle, Indepnendent)?
+#   variables:
+#     r3: q55m
+#     r4: null
+#     r5: null
+#     r6: null
+#
+# trust_traditional_leaders:
+#   <<: *trust
+#   label: Trust traditional leaders
+#   description: >
+#     How much do you trust each of the following, or haven’t you heard enough about them to say: Traditional leaders?
+#   variables:
+#     r3: null
+#     r4: q49i
+#     r5: null
+#     r6: q52k
+#
+# trust_tax_department:
+#   <<: *trust
+#   label: Trust tax department
+#   description: >
+#     How much do you trust each of the following, or haven’t you heard enough about them to say: The Tax Department?
+#   variables:
+#     r3: null
+#     r4: null
+#     r5: q59d
+#     r6: q52d
+#
+# trust_religious_leaders:
+#   <<: *trust
+#   label: Trust religious leaders
+#   description: >
+#     How much do you trust each of the following, or haven’t you heard enough about them to say: Religious leaders?
+#   variables:
+#     r3: null
+#     r4: null
+#     r5: null
+#     r6: q52l
+#
+# respondent_friendly:
+#   label: Respondent friendly
+#   type: string
+#   description: >
+#     What was the respondent’s attitude toward you during the interview? Was he or she: friendly, in between, or hostile?
+#   constraints:
+#     enum:
+#       - Friendly
+#       - In between
+#       - Hostile
+#   ordered: true
+#   missing:
+#     - Missing
+#   variables:
+#     r3: q108a
+#     r4: q108a
+#     r5: q110a
+#     r6: q110a
+#
+# respondent_interested:
+#   label: Respondent interested
+#   type: string
+#   description: >
+#     What was the respondent’s attitude toward you during the interview? Was he or she: interested, in between, or bored?
+#   constraints:
+#     enum:
+#       - Interested
+#       - In between
+#       - Bored
+#   ordered: true
+#   missing:
+#     - Missing
+#   variables:
+#     r3: q108b
+#     r4: q108b
+#     r5: q110b
+#     r6: q110b
+#
+# respondent_cooperative:
+#   label: Respondent cooperative
+#   type: string
+#   description: >
+#     What was the respondent’s attitude toward you during the interview? Was he or she: cooperative, in between, or uncooperative?
+#   constraints:
+#     enum:
+#       - Cooperative
+#       - In between
+#       - Uncooperative
+#   ordered: true
+#   missing:
+#     - Missing
+#   variables:
+#     r3: q108c
+#     r4: q108c
+#     r5: q110c
+#     r6: q110c
+#
+# respondent_patient:
+#   label: Respondent patient
+#   type: string
+#   description: >
+#     What was the respondent’s attitude toward you during the interview? Was he or she: patient, in between, or impatient?
+#   constraints:
+#     enum:
+#       - Patient
+#       - In between
+#       - Impatient
+#   ordered: true
+#   missing:
+#     - Missing
+#   variables:
+#     r3: q108d
+#     r4: q108d
+#     r5: q110d
+#     r6: q110d
+#
+# respondent_ease:
+#   label: Respondent at ease
+#   type: string
+#   description: >
+#     What was the respondent’s attitude toward you during the interview? Was he or she: at ease, in between, or suspicious?
+#   constraints:
+#     enum:
+#       - At ease
+#       - In between
+#       - Suspicious
+#   ordered: true
+#   missing:
+#     - Missing
+#   variables:
+#     r3: q108e
+#     r4: q108e
+#     r5: q110e
+#     r6: q110e
+#
+# respondent_honest:
+#   label: Respondent honest
+#   type: string
+#   description: >
+#     What was the respondent’s attitude toward you during the interview? Was he or she: honest, in between, or misleading?
+#   constraints:
+#     enum:
+#       - Honest
+#       - In between
+#       - Misleading
+#   ordered: true
+#   missing:
+#     - Missing
+#   variables:
+#     r3: q108f
+#     r4: q108f
+#     r5: q110f
+#     r6: q110f
+#
+# leaders_representation:
+#   <<: *binarychoice
+#   label: Leaders treat all equally vs. help own community
+#   description: >
+#     Which of the following statements is closest to your view? Choose Statement A or Statement B.
+#
+#     A: Since leaders represent everyone, leaders should not favour their own family or group.
+#     B: Once in office, leaders are obliged to help their home community.
+#   variables:
+#     r3: q21
+#     r4: q17
+#     r5: q18
+#     r6: null
+#
+#
+# respect_authority:
+#   <<: *binarychoice
+#   label: Question actions of leaders vs. respect authority
+#   description: >
+#     Let’s talk for a moment about the kind of society we would like to have in this country. Which of the following statements is closest to your view? Choose Statement A or Statement B.
+#
+#     A: As citizens, we should be more active in questioning the actions of our leaders.
+#     B: In our country these days, we should show more respect for authority.
+#
+#   variables:
+#     r3: q20
+#     r4: q16
+#     r5: null
+#     r6: null
+#
+# ethnic_group_unfair:
+#   type: string
+#   constraints:
+#     enum:
+#       - Never
+#       - Sometimes
+#       - Often
+#       - Always
+#   missing:
+#     - Not applicable
+#     - Don't Know
+#     - Refused
+#     - Missing
+#     - Not asked
+#   label: Ethnic group treated unfairly
+#   description: >
+#     How often, if ever, are ___________s [R’s Ethnic Group] treated unfairly by the government?
+#   variables:
+#     r3: q81
+#     r4: q82
+#     r5: q85a
+#     r6: q88a
+#
+# ethnic_group_econ:
+#   type: string
+#   constraints:
+#     enum:
+#       - Much Worse
+#       - Worse
+#       - Same
+#       - Better
+#       - Much Better
+#   missing:
+#     - Not applicable
+#     - Don't Know
+#     - Refused
+#     - Missing
+#     - Not asked
+#   label: Ethnic group’s economic conditions
+#   description: >
+#     Think about the condition of ____________ [R’s Ethnic Group]. Are their economic conditions worse, the same as, or better than other groups in this country?
+#   variables:
+#     r3: q80a
+#     r4: q80
+#     r5: null
+#     r6: null
+#
+# ethnic_group_political:
+#   type: string
+#   constraints:
+#     enum:
+#       - Much less
+#       - Less
+#       - Same
+#       - More
+#       - Much more
+#   missing:
+#     - Not applicable
+#     - Don't Know
+#     - Refused
+#     - Missing
+#     - Not asked
+#   label: Ethnic group’s political influence
+#   description: >
+#     Think about the condition of ____________ [R’s Ethnic Group]. Do they have less, the same, or more influence in politics than other groups in this country?
+#   variables:
+#     r3: q80b
+#     r4: q81
+#     r5: null
+#     r6: null
+#
+# languages_spoken:
+#   type: string
+#   lower: true
+#   description: >
+#     What languages do you speak well (verbatim)
+#   variables:
+#     r3: null
+#     r4: q88e
+#     r5: null
+#     r6: null
+#
+# languages_number:
+#   type: integer
+#   label: Number of languages
+#   missing:
+#     - Don't know
+#     - Refused
+#     - Missing
+#   description: >
+#     What languages do you speak well?
+#   variables:
+#     r3: null
+#     r4: q88f
+#     r5: null
+#     r6: null
+#
+# others_present:
+#   type: string
+#   label: Others present
+#   mappings:
+#     Spouse: Spouse only
+#     Children Only: Children only
+#   constraints:
+#     enum:
+#     - No one
+#     - Spouse only
+#     - Children only
+#     - A few others
+#     - Small crowd
+#   missing:
+#     - Missing Data
+#   variables:
+#     r3: q104
+#     r4: q104
+#     r5: q106
+#     r6: q106
+#
+# house_water_source:
+#   type: string
+#   label: Source of water for household use
+#   description: >
+#     Please tell me whether each of the following are available inside your house, inside your compound, or outside your compound: your main source of water for household use?
+#   constraints:
+#     ordered: true
+#     enum:
+#     - Inside the house
+#     - Inside the compound
+#     - Outside the compound
+#   missing:
+#     - Missing
+#     - Refused
+#     - Don't know
+#   variables:
+#     r3: null
+#     r4: q93a
+#     r5: q95a
+#     r6: q93a
+#
+# house_toilet:
+#   type: string
+#   label: Location of toilet or latrine
+#   description: >
+#     Please tell me whether each of the following are available inside your house, inside your compound, or outside your compound: A toilet or latrine
+#   mappings:
+#     No latrine: None, no latrine available
+#   constraints:
+#     enum:
+#     - None, no latrine available
+#     - Inside the house
+#     - Inside the compound
+#     - Outside the compound
+#   missing:
+#     - Missing
+#     - Refused
+#     - Don't know
+#   variables:
+#     r3: null
+#     r4: null
+#     r5: q95b
+#     r6: q93b
+#
+#
+# religion_cond:
+#   type: string
+#   description: Respondent's religion (binned)
+#   comment: >
+#     This is similar to the `RELIG_COND` variable in round 6, but applied to
+#     all rounds. The `RELIG_COND` is also not consistent within defitions.
+#   mappings:
+#     African Abraham: Christian
+#     African Abraham Church: Christian
+#     African Apostolic Faith: Christian
+#     African Independent Church: Christian
+#     African Inland Church: Christian
+#     African International: Christian
+#     Agnostic: None
+#     Agnostic (Do not know if there is a God): None
+#     Agnostic(Do not know if there is a God): None
+#     Alliance Chretienne et Missionnaire: Christian
+#     Anglican: Christian
+#     Ansardine Brotherhood: Muslim
+#     Apostolic: Christian
+#     Apostolic Church: Christian
+#     Apostolic Faith/New_United: Christian
+#     Assemblies of God: Christian
+#     Assembly of God: Christian
+#     Atheist: None
+#     Atheist (Do not believe in a God): None
+#     Atheist(Do not believe in a God): None
+#     Bahai: Other
+#     Baptist: Christian
+#     Bashariya Mission: Muslim
+#     Bible Believers: Christian
+#     Brethren in Christ: Christian
+#     Buddhist: Other
+#     Calvinist: Christian
+#     Calviniste (FJKM): Christian
+#     Catholic: Christian
+#     Celestial Christianity: Christian
+#     Christian (general/other): Christian
+#     Christian Missions in Many Lands: Christian
+#     Christian only: Christian
+#     Christian Rationalism: Christian
+#     Christianisme Celeste: Christian
+#     Church of Christ: Christian
+#     CMA: Christian
+#     CMML: Christian
+#     Confr Arie de la Hamadiya (Hamalite): Muslim
+#     Confr Arie de la Trabiya: Muslim
+#     Confr Arie de la Wahhabiya (Wahhabite): Muslim
+#     Confr Arie des Lay anes(brotherhood): Muslim
+#     Confrerie de la Hamadiya (Hamalite): Muslim
+#     Confrerie de la Trabiya: Muslim
+#     Coptic: Christian
+#     Covenant Church: Christian
+#     Dutch Reform: Christian
+#     Dutch Reformed: Christian
+#     Dutch Reformed (e.g. NGK,NHK,GK,Mission,APK,URC): Christian
+#     Don't know: null
+#     Emmanuel: Christian
+#     Evangelical: Christian
+#     Faith Apostolic: Christian
+#     Hamalite / Chérif de Nioro Brotherhood: Muslim
+#     Harriste: Christian
+#     Hindu: Other
+#     Hisbulah Mission: Muslim
+#     Ibadi: Muslim
+#     Independent: Christian
+#     IPCC: Christian
+#     Ismaeli: Muslim
+#     Izala: Muslim
+#     Jehovah's Witness: Christian
+#     Jewish: Other
+#     Johanne Masowe: Other
+#     Last Church: Christian
+#     Last Church of God: Christian
+#     Last Church/Reform: Christian
+#     Layene: Muslim
+#     Lutheran: Christian
+#     Marathi: Other
+#     Mennonite: Christian
+#     Methodist: Christian
+#     Mormon: Christian
+#     Mouridiya Brotherhood: Muslim
+#     Muslim (general/other): Muslim
+#     Muslim khadre: Muslim
+#     Muslim Layène: Muslim
+#     Muslim Mouride: Muslim
+#     Muslim only: Muslim
+#     Muslim Tijane: Muslim
+#     Muslim, Shiite: Muslim
+#     Muslim, Sunni: Muslim
+#     Nationality: Nationality
+#     Nazaren: Christian
+#     Nazaren Church: Christian
+#     Nazareth Church: Christian
+#     New Apostolic Church: Christian
+#     NG Kerk: Christian
+#     None: None
+#     NOT ASKED IN THIS COUNTRY: null
+#     Old Apostolic: Christian
+#     Orthodox: Christian
+#     Other: Other
+#     Other Christian (Moravian): Christian
+#     Pentecostal: Christian
+#     Presbyterian: Christian
+#     Protestant (Evangelical/Pentecostal): Christian
+#     Protestant (Mainstream): Christian
+#     Qadiriya Brotherhood: Muslim
+#     Quaker/Friends: Christian
+#     Reformed Church in Zimbabwe: Christian
+#     Rhema: Christian
+#     Roman Catholic: Christian
+#     Salvation Army: Christian
+#     Seventh Day Adventist: Christian
+#     Shia: Muslim
+#     Shia only: Muslim
+#     Sidya: Muslim
+#     St John Apostolic: Christian
+#     Sukuti: Muslim
+#     Sunni only: Muslim
+#     Tamil: Other
+#     Telegu: Other
+#     Tijaniya Brotherhood: Muslim
+#     Toby Betela: Other
+#     Topia: Christian
+#     Traditional religion: Other
+#     Traditional/ethnic religion: Other
+#     Twelve Apostles: Christian
+#     UCCSA: Christian
+#     United Church: Christian
+#     United Church of Zambia: Christian
+#     United Church of Zamia: Christian
+#     Utopia Church: Christian
+#     Vahao ny Oloko: Christian
+#     Voice of unity/unity of christ/faith of unity: Christian
+#     Wahhabiya Brotherhood: Muslim
+#     Zaoga: Christian
+#     ZCC: Christian
+#     Zion: Christian
+#     Zionist Christian Church: Christian
+#   variables:
+#     r6: Q98A
+#     r5: Q98A
+#     r4: Q90
+#     r3: Q91
+#     r2: Q85

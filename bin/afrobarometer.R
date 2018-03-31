@@ -45,137 +45,129 @@ read_afrobarometer <- function(r = 6L) {
 # Additional transformations
 cleaners <- list()
 
+#' Regularize all whitespace
+regularize_whitespace <- function(x) str_replace_all(x, "\\s+", " ")
+
+#' Remove spaces around forward slashes
+regularize_slashes <- function(x) str_replace_all(x, "\\s*/\\s*", "/")
+
+#' Regularize quotes
+regularize_quotes <- function(x) {
+  str_replace_all(x, c("[`’]" = "'", "[“”]" = '"'))
+}
+
+#' Remove accents etc
+to_ascii <- function(x) {
+  stringi::stri_trans_general(x, "Any-latin; Latin-ascii")
+}
 
 NA_VALUES <- list(
   "Don't know",
   "Missing",
   "Refused",
   "Not applicable",
-  "Not asked in country",
-  "Don't know / did not understand the question",
-  "Don't know / haven't heard enough to say"
+  "Not asked in country"
 )
 
-default_clean <- function(x) {
+NA_PATTERNS <- list(
+  "^don't know$" = "Don't know",
+  "^refused( to answer)?$" = "Refused",
+  "^don[']t know ?/ ?haven[']t heard enough( to say)?$" = "Don't know",
+  "^don[']t know ?/ ?did not understand the question$" = "Don't know",
+  "^no further (answer|reply)$" = "No further answer",
+  "^(not applicable|NA |N / A).*$" = "Not applicable",
+  "^not asked in .*$" = "Not asked in country",
+  "^missing( data)?$" = "Missing")
+
+clean_na <- function(x) {
+  for (i in seq_along(NA_PATTERNS)) {
+    x <- str_replace_all(x, regex(names(NA_PATTERNS)[[i]], ignore_case = TRUE),
+                         NA_PATTERNS[[i]])
+  }
+  x
+}
+
+clean_variable <- function(x, config) {
   if (haven::is.labelled(x)) {
     x <- as.character(haven::as_factor(x))
   }
-  if (is.character(x)) {
-    # Common patterns to replace in all cases
-    x <- str_replace_all(x, c("\\s+" = " ",
-                              "[`’]" = "'",
-                              " */ *" = " / "))
-    # Converting to ASCII since accents and UTF is used inconsistently
-    x <- stringi::stri_trans_general(x, "Any-latin; Latin-ascii")
-    # Make missing values consistent
-    x <- str_replace(x, regex("^don't know$", ignore_case = TRUE),
-                     "Don't know") %>%
-       str_replace(regex("^refused( to answer)?$", ignore_case = TRUE),
-                         "Refused") %>%
-       str_replace(regex("^don[']t know ?/ ?haven[']t heard enough( to say)?$",
-                         ignore_case = TRUE),
-                   "Don't know") %>%
-       str_replace(regex("^don[']t know ?/ ?did not understand the question$",
-                         ignore_case = TRUE),
-                   "Don't know") %>%
-       str_replace(regex("^no further (answer|reply)$", ignore_case = TRUE),
-                   "No further answer") %>%
-       str_replace(regex("^(not applicable|NA |N / A).*$", ignore_case = TRUE),
-                   "Not applicable") %>%
-       str_replace(regex("^not asked in .*$", ignore_case = TRUE),
-                   "Not asked in country") %>%
-       str_replace(regex("^missing( data)?$", ignore_case = TRUE),
-                   "Missing")
-
-    # trim extra whitespace
-    x <- str_trim(x)
+  if (is.factor(x)) {
+    x <- as.character(x)
   }
+  # process transformations
+  pp <- config[["preprocess"]]
+  if (!is.null(pp)) {
+    if (is.character(x)) {
+      x <- regularize_whitespace(x)
+      x <- regularize_quotes(x)
+      x <- regularize_slashes(x)
+      x <- to_ascii(x)
+      x <- clean_na(x)
+      # Replace any patterns
+      if (!is.null(pp[["patterns"]])) {
+        for (pattern in names(pp[["patterns"]])) {
+          x <- str_replace_all(x, pattern, pp[["patterns"]][[pattern]])
+        }
+      }
+      # Replace any exact matches
+      if (!is.null(pp[["mappings"]])) {
+        x <- dplyr::recode(x, !!!pp[["mappings"]])
+      }
+
+      if (!is.null(config[["case"]])) {
+        if (config[["case"]] == "lower") {
+          x <- str_to_lower(x)
+        } else if (case == "upper") {
+          x <- str_to_upper(x)
+        } else if (case == "title") {
+          x <- str_to_title(x)
+        } else {
+          stop("Invalid case: ", config[["case"]], "\n", .call = FALSE)
+        }
+      }
+    }
+  }
+  if (config[["type"]] == "number") {
+    x <- as.numeric(x)
+  } else if (config[["type"]] == "integer") {
+    x <- as.integer(x)
+  } else if (config[["type"]] == "date") {
+    x <- as.Date(x)
+  }
+
   x
+}
+
+lpi <- function(x) {
+  mutate(out, lpi = (as.numeric(lpi_food) +
+                       as.numeric(lpi_water) +
+                       as.numeric(lpi_medical) +
+                       as.numeric(lpi_fuel) +
+                       as.numeric(lpi_cash)) / 5 - 1)
 }
 
 clean_afrobarometer <- function(.round) {
   cat(glue("Processing round {.round}."), '\n')
   # generate the list of variable names to select
   variables <-
-    map(VARIABLE_MAP, c("variables", str_c("r", .round))) %>%
-    discard(is.null) %>%
-    map(str_to_lower) %>%
-    map(rlang::sym)
+    discard(VARIABLE_MAP, ~ is.null(.x[["variables"]][[str_c("r", .round)]]))
 
   # extract the subset of variables that are needed/wanted
   out <- haven::read_sav(AFROBAROMETER_FILENAMES[.round]) %>%
-    rename_all(str_to_lower) %>%
-    select(!!!variables)
+    rename_all(str_to_lower)
 
   # apply cleaning functions to each variable
-  for (i in names(out)) {
+  for (i in names(variables)) {
     varinfo <- VARIABLE_MAP[[i]]
+    varname <- str_to_lower(varinfo[["variables"]][[str_c("r", .round)]])
     cat("\t", glue("cleaning variable {i}"), "\n")
-    out[[i]] <- default_clean(out[[i]])
-
-    # Replace any patterns
-    if (!is.null(varinfo[["patterns"]])) {
-      for (pattern in names(varinfo[["patterns"]])) {
-        out[[i]] <- str_replace_all(out[[i]], pattern,
-                                    varinfo[["patterns"]][[pattern]])
-      }
-    }
-    # Replace any mappings
-    if (!is.null(varinfo[["mappings"]])) {
-      out[[i]] <- recode(out[[i]], !!!varinfo[["mappings"]])
-    }
-    # create variable with missing value types
-    # match in a case-insenitive manner
-    is_missing <- str_to_lower(out[[i]]) %in% str_to_lower(NA_VALUES)
-    if (any(is_missing)) {
-      out[[str_c(i, "_NA")]] <-
-        if_else(is_missing,
-                recode(str_to_lower(out[[i]]),
-                       !!!as.list(set_names(NA_VALUES, str_to_lower(NA_VALUES)))
-                       ),
-                NA_character_)
-      # Ensure that missing values are in
-      out[[i]] <- if_else(is_missing, NA_character_, out[[i]])
-    }
-    # Lower case strings
-    if (truthy(varinfo[["lower"]])) {
-      out[[i]] <- str_to_lower(out[[i]])
-    }
-    # If it's a string / factor type
-    if (varinfo[["type"]] %in% c("string")) {
-      # enum constraint = factor
-      if (!is.null(varinfo[["constraints"]][["enum"]])) {
-        lvls <- varinfo[["constraints"]][["enum"]]
-        badlvls <- base::setdiff(unique(na.omit(out[[i]])), lvls)
-        if (length(badlvls)) {
-          stop("Invalid levels of ", i, " found: ",
-               str_c(sQuote(badlvls), collapse = ", "), "\n", call. = FALSE)
-        }
-        # ordered means what it says
-        if (!is.null(varinfo[["ordered"]]) && varinfo[["ordered"]]) {
-          out[[i]] <- ordered(out[[i]], levels = lvls)
-        } else {
-          out[[i]] <- factor(out[[i]], levels = lvls)
-        }
-      }
-    } else if (varinfo[["type"]] == "number") {
-      out[[i]] <- as.numeric(out[[i]])
-    } else if (varinfo[["type"]] == "integer") {
-      out[[i]] <- as.integer(out[[i]])
-    } else if (varinfo[["type"]] == "date") {
-      out[[i]] <- as.Date(out[[i]])
-    }
+    out[[i]] <- clean_variable(out[[varname]], varinfo)
   }
 
-  # Calculate LPI. I think it is just the mean of the components.
-  out <- mutate(out, lpi = (as.numeric(lpi_food) +
-                             as.numeric(lpi_water) +
-                             as.numeric(lpi_medical) +
-                             as.numeric(lpi_fuel) +
-                             as.numeric(lpi_cash)) / 5 - 1)
+  # Any other cleanup code goes HERE
 
-  # Any other cleanup code
   out %>%
+    select(one_of(names(variables))) %>%
     mutate(round = UQ(.round))
 }
 

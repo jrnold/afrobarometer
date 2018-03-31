@@ -13,19 +13,27 @@
           }
         },
         "comment": {"type": "string"},
-        "mappings": {
+        "preprocess": {
           "type": "object",
-          "patternProperties": {
-            ".*": {"type": "string"}
+          "mappings": {
+            "type": "object",
+            "patternProperties": {
+              ".*": {"type": "string"},
+            "comment": "Exact string value replacements. The key is the value to be replaced, and the value is the value to use as a replacement."
+            },
+          "patterns": {
+            "type": "object",
+            "patternProperties": {
+              ".*": {"type": "string"}
+            },
+            "comment": "Regular expression replacements. The key is the value to be replaced, and the value is the value to use as a replacement."
+          },
+          "case": {
+            "type": "string",
+            "enum": ["lower", "upper", "title"],
+            "comment": "Convert output strings to lower-case, upper-case, or title-case."
           }
         },
-        "patterns": {
-          "type": "object",
-          "patternProperties": {
-            ".*": {"type": "string"}
-          }
-        },
-        "lower": {"type": "boolean"},
         "label": {"type": "string"},
         "description": {"type": "string"}
       }
