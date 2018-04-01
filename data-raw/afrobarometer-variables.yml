@@ -1,7 +1,7 @@
 round:
   description: Round number
   type: integer
-  constraints:
+  factor:
     minimum: 1
     maximum: 6
   variables: null
@@ -155,31 +155,31 @@ combinwt:
     r3: combinwt
     r2: null
 
-interview_language:
-  description: Primary language in which the interview was conducted
-  type: string
-  preprocess:
-    case: lower
-  constraints:
-    is_nullable: false
-  variables:
-    r6: q103
-    r5: q103
-    r4: q103
-    r3: q103
-    r2: q103
-
-interview_language_other:
-  description: Primary language in which the interview was conducted,
-    open-ended response if they answered "OTHER".
-  type: string
-  preprocess:
-    case: lower
-    patterns:
-      "^$": .na.character
-  variables:
-    r6: q103other
-    r5: q103other
+# interview_language:
+#   description: Primary language in which the interview was conducted
+#   type: string
+#   preprocess:
+#     case: lower
+#   constraints:
+#     is_nullable: false
+#   variables:
+#     r6: q103
+#     r5: q103
+#     r4: q103
+#     r3: q103
+#     r2: q103
+#
+# interview_language_other:
+#   description: Primary language in which the interview was conducted,
+#     open-ended response if they answered "OTHER".
+#   type: string
+#   preprocess:
+#     case: lower
+#     patterns:
+#       "^$": .na.character
+#   variables:
+#     r6: q103other
+#     r5: q103other
 
 interviewer_id:
   description: Interviewer identifier
@@ -202,9 +202,9 @@ interviewer_age:
 
 interviewer_gender:
   description: Interviewer gender
-  type: string
-  constraints:
-    enum:
+  type: factor
+  factor:
+    levels:
       - Male
       - Female
   variables:
@@ -231,31 +231,31 @@ interviewer_urbrur:
     r4: q113
     r3: q113
 
-interviewer_language:
-  type: string
-  description: Home language of the interviewer
-  preprocess:
-    case: lower
-  variables:
-    r6: q116
-    r5: q116
-    r4: q114
-    r3: q114
-    r2: q110
-
-interviewer_language_other:
-  type: string
-  preprocess:
-    case: lower
-    patterns:
-      "^$": .na.character
-  variables:
-    r6: q116other
-    r5: q116other
-    r4: null
-    r3: null
-    r2: null
-    r1: null
+# interviewer_language:
+#   type: string
+#   description: Home language of the interviewer
+#   preprocess:
+#     case: lower
+#   variables:
+#     r6: q116
+#     r5: q116
+#     r4: q114
+#     r3: q114
+#     r2: q110
+#
+# interviewer_language_other:
+#   type: string
+#   preprocess:
+#     case: lower
+#     patterns:
+#       "^$": .na.character
+#   variables:
+#     r6: q116other
+#     r5: q116other
+#     r4: null
+#     r3: null
+#     r2: null
+#     r1: null
 
 interviewer_ethnicity:
   type: string
@@ -299,7 +299,30 @@ age:
   description: Respondent's age
   type: factor
   factor:
-    levels: ["15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31","32","33","34","35","36","37","38","39","40","41","42","43","44","45","46","47","48","49","50","51","52","53","54","55","56","57","58","59","60","61","62","63","64","65","66","67","68","69","70","71","72","73","74","75","76","77","78","79","80","81","82","83","84","85","86","87","88","89","90","91","92","93","94","95","96","97","98","99","100","101","102","103","104","105","106","107","108","109","110","111","112","113","114","115","116","117","118","119","120","121","122","123","124","125","126","127","128","129","130"]
+    levels: ["15", "16", "17", "18", "19",
+             "20", "21", "22", "23", "24",
+             "25", "26", "27", "28", "29",
+             "30", "31", "32", "33", "34",
+             "35", "36", "37", "38", "39",
+             "40", "41", "42", "43", "44",
+             "45", "46", "47", "48", "49",
+             "50", "51", "52", "53", "54",
+             "55", "56", "57", "58", "59",
+             "60", "61", "62", "63", "64",
+             "65", "66", "67", "68", "69",
+             "70", "71", "72", "73", "74",
+             "75", "76", "77", "78", "79",
+             "80", "81", "82", "83", "84",
+             "85", "86", "87", "88", "89",
+             "90", "91", "92", "93", "94",
+             "95", "96", "97", "98", "99",
+             "100", "101", "102", "103", "104",
+             "105", "106", "107", "108", "109",
+             "110", "111", "112", "113", "114",
+             "115", "116", "117", "118", "119",
+             "120", "121", "122", "123", "124",
+             "125", "126", "127", "128", "129",
+             "130"]
     missing:
     - Missing
     - Don't know
@@ -316,7 +339,6 @@ gender:
   description: Respondent's gender
   type: factor
   factor:
-    allow_na: false
     levels:
     - Male
     - Female
@@ -340,8 +362,9 @@ gender:
 #     r2: q83
 #
 # respondent_language_other:
-#   description: Home language of the respondent,
-#     open-ended response if they answered "OTHER".
+#   description: >-
+#     Home language of the respondent, open-ended response if they
+#     answered "OTHER".
 #   preprocess:
 #     patterns:
 #       "^$": .na.character
@@ -381,6 +404,57 @@ race:
 religion:
   type: factor
   description: Respondent's religion
+  notes: >
+    The questionaires split up religions into the following
+
+    - Christian Groups/Denominations
+      - Christian only (no specific sub-group identified)
+      - Roman Catholic
+      - Orthodox
+      - Coptic
+      - Protestant - Mainline
+        - Anglican
+        - Lutheran
+        - Methodist
+        - Presbyterian
+        - Baptist
+        - Quaker / Friends
+        - Mennonite
+        - Dutch Reformed
+        - Calvinist
+      - Protestant - Non-mainline
+        - Evangelical
+        - Pentecostal (Born Again and/or Saved)
+        - Independent (African Independent Church)
+        - Church of Christ
+        - Zionist Christian Church
+      - Others
+        - Jehovah's Witness
+        - Seventh Day Adventist
+        - Mormon
+    - Muslim Groups/Denominations
+      - Muslim only (no specific sub-group identified)
+      - Sunni
+        - Sunni only (no specific sub-group identified)
+        - Ismaeli
+        - Mouridiya Brotherhood
+        - Tijaniya Brotherhood
+        - Qadiriya Brotherhood
+      - Shia
+        - Shia
+    - Other
+      - Ethnic/traditional
+      - Hindu
+      - Bahai
+      - Agnostic
+      - Atheist
+      - Jewish
+      - Other
+
+    Cleaning the religion question may be easier and more accurate if
+    handled as a post-processing function so that it can incorporate more
+    logic.
+
   factor:
     levels:
     - African Abraham Church
@@ -461,7 +535,7 @@ religion:
     - Shia
     - Shia only
     - Sidya
-    - St John Apostolic
+    - St. John Apostolic
     - Sukuti
     - Sunni only
     - Tamil
@@ -594,7 +668,7 @@ religion:
       Shia: Shia
       Shia only: Shia only
       Sidya: Sidya
-      St John Apostolic: St John Apostolic
+      St John Apostolic: St. John Apostolic
       Sukuti: Sukuti
       Sunni only: Sunni only
       Tamil: Tamil
@@ -624,61 +698,67 @@ religion:
     r3: Q91
     r2: Q85
 
-# religiosity_attendence:
-#   description: >
-#     People practice their religion in different ways. Aside from weddings and funerals, how often do
-#     you personally engage in religious practices like prayer, reading a religious book, or attending a religious
-#     service or a meeting of a religious group? Would you say you do so:
-#   type: string
-#   mappings:
-#     "Respondent has no religion": "Not applicable"
-#   ordered: false
-#   constraints:
-#     enum:
-#       - Never
-#       - "About once a year or less"
-#       - A few times a year
-#       - "About once every several months"
-#       - About once a month
-#       - About once a week
-#       - A few times a week
-#       - "More than once a week"
-#       - About once a day
-#       - More than once a day
-#   comment: >
-#     R3 has different categories than latter rounds. Actual use would
-#     require reconciling these categories.
-#   variables:
-#     r6: q98b
-#     r5: null
-#     r4: null
-#     r3: Q92
-#     r2: Q86
-#
-# religiosity_importance:
-#   description: >
-#      How important is religion in your life?
-#   type: string
-#   missing:
-#     - Refused
-#     - Missing
-#     - Don't know
-#   mappings:
-#     Refused to answer: Refused
-#   constraints:
-#     enum:
-#       - Not at all important
-#       - Somewhat important
-#       - Very important
-#       - Not very important
-#   ordered: true
-#   variables:
-#     r5: q98b
-#     r4: q91
-#
+religiosity_attendence:
+  description: >
+    People practice their religion in different ways. Aside from weddings and funerals, how often do
+    you personally engage in religious practices like prayer, reading a religious book, or attending a religious
+    service or a meeting of a religious group? Would you say you do so:
+  type: factor
+  preprocess:
+    mappings:
+      "Respondent has no religion": "Not applicable"
+  factor:
+    ordered: true
+    missing:
+    - Don't know
+    - Missing
+    - Refused
+    - Not applicable
+    levels:
+      - Never
+      - "About once a year or less"
+      - A few times a year
+      - "About once every several months"
+      - About once a month
+      - About once a week
+      - A few times a week
+      - "More than once a week"
+      - About once a day
+      - More than once a day
+  comment: >
+    R3 has different categories than latter rounds. Actual use would
+    require reconciling these categories.
+  variables:
+    r6: q98b
+    r5: null
+    r4: null
+    r3: Q92
+    r2: Q86
+
+religiosity_importance:
+  description: >
+     How important is religion in your life?
+  type: factor
+  factor:
+    missing:
+    - Refused
+    - Missing
+    - Don't know
+    ordered: true
+    levels:
+    - Not at all important
+    - Somewhat important
+    - Very important
+    - Not very important
+  preprocess:
+    mappings:
+      Refused to answer: Refused
+  variables:
+    r5: q98b
+    r4: q91
+
 education:
   type: factor
-  # it's not exactly ordered
   factor:
     ordered: true
     levels:
@@ -693,9 +773,9 @@ education:
       - University completed
       - Post-graduate
     missing:
-      - Missing
-      - Don't know
-      - Refused
+    - Missing
+    - Don't know
+    - Refused
   preprocess:
     mappings:
       Secondary school completed/high school: "Secondary school/high school completed"
@@ -712,7 +792,7 @@ occupation:
   description: "Respondent's occupation"
   type: string
   # constraints:
-  #   enum:
+  #   levels:
   #     - Agriculture/farming/fishing/forestry
   #     - Artisan or skilled manual worker
   #     - Businessperson (own business, 10 or more)
@@ -799,60 +879,60 @@ ethnicity:
     r4: Q79
     r3: Q79
     r2: null
-#
-# shelter_type:
-#   type: string
-#   missing:
-#   - Missing
-#   ordered: false
-#   constraints:
-#     enum:
-#     - Flat in a block of flats
-#     - Hostel in an industrial compound or farming compound
-#     - Non-traditional / formal house
-#     - Other
-#     - Room in a hotel, or a residential hotel
-#     - Single room in a larger dwelling structure or backyard
-#     - Temporary structure / shack
-#     - Traditional house / hut
-#   variables:
-#     r6: Q104
-#     r5: Q104
-#     r4: null
-#     r3: null
-#     r2: Q98
-#
-# roof_type:
-#   type: string
-#   constraints:
-#     enum:
-#     - Asbestos
-#     - Concrete
-#     - Metal, tin or zinc
-#     - Multiple materials
-#     - Plastic sheets
-#     - Shingles
-#     - Some other material
-#     - Thatch or grass
-#     - Tiles
-#   mappings:
-#     Asbestos: Asbestos
-#     Concrete: Concrete
-#     "Could not tell / could not see": "Missing"
-#     Metal, tin or zinc: Metal, tin or zinc
-#     Missing: Missing
-#     Multiple materials: Multiple materials
-#     Plastic sheets: Plastic sheets
-#     Shingles: Shingles
-#     Some other material: Some other material
-#     Thatch or grass: Thatch or grass
-#     Tiles: Tiles
-#   missing:
-#   - "Could not tell/could not see"
-#   - "Missing"
-#   variables:
-#     r6: Q105
-#     r5: Q105
+
+shelter_type:
+  type: factor
+  factor:
+    missing:
+    - Missing
+    ordered: false
+    levels:
+    - Flat in a block of flats
+    - Hostel in an industrial compound or farming compound
+    - Non-traditional/formal house
+    - Other
+    - Room in a hotel, or a residential hotel
+    - Single room in a larger dwelling structure or backyard
+    - Temporary structure/shack
+    - Traditional house/hut
+  variables:
+    r6: Q104
+    r5: Q104
+    r4: null
+    r3: null
+    r2: Q98
+
+roof_type:
+  type: factor
+  factor:
+    levels:
+    - Asbestos
+    - Concrete
+    - Metal, tin or zinc
+    - Multiple materials
+    - Plastic sheets
+    - Shingles
+    - Some other material
+    - Thatch or grass
+    - Tiles
+    mappings:
+      Asbestos: Asbestos
+      Concrete: Concrete
+      "Could not tell / could not see": "Missing"
+      Metal, tin or zinc: Metal, tin or zinc
+      Missing: Missing
+      Multiple materials: Multiple materials
+      Plastic sheets: Plastic sheets
+      Shingles: Shingles
+      Some other material: Some other material
+      Thatch or grass: Thatch or grass
+      Tiles: Tiles
+    missing:
+    - "Could not tell/could not see"
+    - "Missing"
+  variables:
+    r6: Q105
+    r5: Q105
 
 lpi_food:
   description: Gone without food
@@ -994,15 +1074,13 @@ generalized_trust:
   description: >
     Generally speaking, would you say that most people can be trusted or that you must be very careful in
     dealing with people?
-  type: string
-  mappings:
-  "Missing data": "Missing"
-  missing:
-  - "Don't know"
-  - "Missing"
-  ordered: true
-  constraints:
-    enum:
+  type: factor
+  factor:
+    missing:
+    - "Don't know"
+    - "Missing"
+    ordered: true
+    levels:
     - "You must be very careful"
     - "Most people can be trusted"
   variables:
@@ -1013,16 +1091,14 @@ neighbor_diff_religion:
     For each of the following types of people, please tell me whether you would like having people
     from this group as neighbors, dislike it, or not care: People of different religion
   <<: &neighbors
-    type: string
-    ordered: true
-    mappings:
-      Not asked in this country: Not asked in country
-    missing:
+    type: factor
+    factor:
+      ordered: true
+      missing:
       - Missing
       - Don't know
       - Not asked in country
-    constraints:
-      enum:
+      levels:
       - Strongly dislike
       - Somewhat dislike
       - Would not care
@@ -1350,224 +1426,229 @@ trust_religious_leaders:
     r5: null
     r6: q52l
 
-# respondent_friendly:
-#   label: Respondent friendly
-#   type: string
-#   description: >
-#     What was the respondent’s attitude toward you during the interview? Was he or she: friendly, in between, or hostile?
-#   constraints:
-#     enum:
-#       - Friendly
-#       - In between
-#       - Hostile
-#   ordered: true
-#   missing:
-#     - Missing
-#   variables:
-#     r3: q108a
-#     r4: q108a
-#     r5: q110a
-#     r6: q110a
-#
-# respondent_interested:
-#   label: Respondent interested
-#   type: string
-#   description: >
-#     What was the respondent’s attitude toward you during the interview? Was he or she: interested, in between, or bored?
-#   constraints:
-#     enum:
-#       - Interested
-#       - In between
-#       - Bored
-#   ordered: true
-#   missing:
-#     - Missing
-#   variables:
-#     r3: q108b
-#     r4: q108b
-#     r5: q110b
-#     r6: q110b
-#
-# respondent_cooperative:
-#   label: Respondent cooperative
-#   type: string
-#   description: >
-#     What was the respondent’s attitude toward you during the interview? Was he or she: cooperative, in between, or uncooperative?
-#   constraints:
-#     enum:
-#       - Cooperative
-#       - In between
-#       - Uncooperative
-#   ordered: true
-#   missing:
-#     - Missing
-#   variables:
-#     r3: q108c
-#     r4: q108c
-#     r5: q110c
-#     r6: q110c
-#
-# respondent_patient:
-#   label: Respondent patient
-#   type: string
-#   description: >
-#     What was the respondent’s attitude toward you during the interview? Was he or she: patient, in between, or impatient?
-#   constraints:
-#     enum:
-#       - Patient
-#       - In between
-#       - Impatient
-#   ordered: true
-#   missing:
-#     - Missing
-#   variables:
-#     r3: q108d
-#     r4: q108d
-#     r5: q110d
-#     r6: q110d
-#
-# respondent_ease:
-#   label: Respondent at ease
-#   type: string
-#   description: >
-#     What was the respondent’s attitude toward you during the interview? Was he or she: at ease, in between, or suspicious?
-#   constraints:
-#     enum:
-#       - At ease
-#       - In between
-#       - Suspicious
-#   ordered: true
-#   missing:
-#     - Missing
-#   variables:
-#     r3: q108e
-#     r4: q108e
-#     r5: q110e
-#     r6: q110e
-#
-# respondent_honest:
-#   label: Respondent honest
-#   type: string
-#   description: >
-#     What was the respondent’s attitude toward you during the interview? Was he or she: honest, in between, or misleading?
-#   constraints:
-#     enum:
-#       - Honest
-#       - In between
-#       - Misleading
-#   ordered: true
-#   missing:
-#     - Missing
-#   variables:
-#     r3: q108f
-#     r4: q108f
-#     r5: q110f
-#     r6: q110f
-#
-# leaders_representation:
-#   <<: *binarychoice
-#   label: Leaders treat all equally vs. help own community
-#   description: >
-#     Which of the following statements is closest to your view? Choose Statement A or Statement B.
-#
-#     A: Since leaders represent everyone, leaders should not favour their own family or group.
-#     B: Once in office, leaders are obliged to help their home community.
-#   variables:
-#     r3: q21
-#     r4: q17
-#     r5: q18
-#     r6: null
-#
-#
-# respect_authority:
-#   <<: *binarychoice
-#   label: Question actions of leaders vs. respect authority
-#   description: >
-#     Let’s talk for a moment about the kind of society we would like to have in this country. Which of the following statements is closest to your view? Choose Statement A or Statement B.
-#
-#     A: As citizens, we should be more active in questioning the actions of our leaders.
-#     B: In our country these days, we should show more respect for authority.
-#
-#   variables:
-#     r3: q20
-#     r4: q16
-#     r5: null
-#     r6: null
-#
-# ethnic_group_unfair:
-#   type: string
-#   constraints:
-#     enum:
-#       - Never
-#       - Sometimes
-#       - Often
-#       - Always
-#   missing:
-#     - Not applicable
-#     - Don't Know
-#     - Refused
-#     - Missing
-#     - Not asked
-#   label: Ethnic group treated unfairly
-#   description: >
-#     How often, if ever, are ___________s [R’s Ethnic Group] treated unfairly by the government?
-#   variables:
-#     r3: q81
-#     r4: q82
-#     r5: q85a
-#     r6: q88a
-#
-# ethnic_group_econ:
-#   type: string
-#   constraints:
-#     enum:
-#       - Much Worse
-#       - Worse
-#       - Same
-#       - Better
-#       - Much Better
-#   missing:
-#     - Not applicable
-#     - Don't Know
-#     - Refused
-#     - Missing
-#     - Not asked
-#   label: Ethnic group’s economic conditions
-#   description: >
-#     Think about the condition of ____________ [R’s Ethnic Group]. Are their economic conditions worse, the same as, or better than other groups in this country?
-#   variables:
-#     r3: q80a
-#     r4: q80
-#     r5: null
-#     r6: null
-#
-# ethnic_group_political:
-#   type: string
-#   constraints:
-#     enum:
-#       - Much less
-#       - Less
-#       - Same
-#       - More
-#       - Much more
-#   missing:
-#     - Not applicable
-#     - Don't Know
-#     - Refused
-#     - Missing
-#     - Not asked
-#   label: Ethnic group’s political influence
-#   description: >
-#     Think about the condition of ____________ [R’s Ethnic Group]. Do they have less, the same, or more influence in politics than other groups in this country?
-#   variables:
-#     r3: q80b
-#     r4: q81
-#     r5: null
-#     r6: null
-#
+respondent_friendly:
+  label: Respondent friendly
+  description: >
+    What was the respondent’s attitude toward you during the interview? Was he or she: friendly, in between, or hostile?
+  type: factor
+  factor:
+    levels:
+      - Friendly
+      - In between
+      - Hostile
+    ordered: true
+    missing:
+    - Missing
+  variables:
+    r3: q108a
+    r4: q108a
+    r5: q110a
+    r6: q110a
+
+respondent_interested:
+  label: Respondent interested
+  type: factor
+  description: >
+    What was the respondent’s attitude toward you during the interview? Was he or she: interested, in between, or bored?
+  factor:
+    levels:
+    - Interested
+    - In between
+    - Bored
+    ordered: true
+    missing:
+    - Missing
+  variables:
+    r3: q108b
+    r4: q108b
+    r5: q110b
+    r6: q110b
+
+respondent_cooperative:
+  label: Respondent cooperative
+  type: factor
+  description: >
+    What was the respondent’s attitude toward you during the interview? Was he or she: cooperative, in between, or uncooperative?
+  factor:
+    levels:
+    - Cooperative
+    - In between
+    - Uncooperative
+    ordered: true
+    missing:
+    - Missing
+  variables:
+    r3: q108c
+    r4: q108c
+    r5: q110c
+    r6: q110c
+
+respondent_patient:
+  label: Respondent patient
+  type: factor
+  description: >
+    What was the respondent’s attitude toward you during the interview? Was he or she: patient, in between, or impatient?
+  factor:
+    levels:
+    - Patient
+    - In between
+    - Impatient
+    ordered: true
+    missing:
+    - Missing
+  variables:
+    r3: q108d
+    r4: q108d
+    r5: q110d
+    r6: q110d
+
+respondent_ease:
+  label: Respondent at ease
+  type: factor
+  description: >
+    What was the respondent’s attitude toward you during the interview? Was he or she: at ease, in between, or suspicious?
+  factor:
+    levels:
+    - At ease
+    - In between
+    - Suspicious
+    ordered: true
+    missing:
+    - Missing
+  variables:
+    r3: q108e
+    r4: q108e
+    r5: q110e
+    r6: q110e
+
+respondent_honest:
+  label: Respondent honest
+  type: string
+  description: >
+    What was the respondent’s attitude toward you during the interview? Was he or she: honest, in between, or misleading?
+  factor:
+    ordered: true
+    levels:
+    - Honest
+    - In between
+    - Misleading
+  ordered: true
+  missing:
+    - Missing
+  variables:
+    r3: q108f
+    r4: q108f
+    r5: q110f
+    r6: q110f
+
+leaders_representation:
+  <<: *binarychoice
+  label: Leaders treat all equally vs. help own community
+  description: >
+    Which of the following statements is closest to your view? Choose Statement A or Statement B.
+
+    A: Since leaders represent everyone, leaders should not favour their own family or group.
+    B: Once in office, leaders are obliged to help their home community.
+  variables:
+    r3: q21
+    r4: q17
+    r5: q18
+    r6: null
+
+
+respect_authority:
+  <<: *binarychoice
+  label: Question actions of leaders vs. respect authority
+  description: >
+    Let’s talk for a moment about the kind of society we would like to have in this country. Which of the following statements is closest to your view? Choose Statement A or Statement B.
+
+    A: As citizens, we should be more active in questioning the actions of our leaders.
+    B: In our country these days, we should show more respect for authority.
+
+  variables:
+    r3: q20
+    r4: q16
+    r5: null
+    r6: null
+
+ethnic_group_unfair:
+  type: factor
+  factor:
+    ordered: true
+    levels:
+      - Never
+      - Sometimes
+      - Often
+      - Always
+    missing:
+    - Not applicable
+    - Don't know
+    - Refused
+    - Missing
+    - Not asked in country
+  label: Ethnic group treated unfairly
+  description: >
+    How often, if ever, are ___________s [R’s Ethnic Group] treated unfairly by the government?
+  variables:
+    r3: q81
+    r4: q82
+    r5: q85a
+    r6: q88a
+
+ethnic_group_econ:
+  type: factor
+  factor:
+    ordered: true
+    levels:
+      - Much Worse
+      - Worse
+      - Same
+      - Better
+      - Much Better
+    missing:
+      - Not applicable
+      - Don't know
+      - Refused
+      - Missing
+      - Not asked
+  label: Ethnic group’s economic conditions
+  description: >
+    Think about the condition of ____________ [R’s Ethnic Group]. Are their economic conditions worse, the same as, or better than other groups in this country?
+  variables:
+    r3: q80a
+    r4: q80
+    r5: null
+    r6: null
+
+ethnic_group_political:
+  type: string
+  factor:
+    levels:
+    - Much less
+    - Less
+    - Same
+    - More
+    - Much more
+    ordered: true
+    missing:
+    - Not applicable
+    - Don't know
+    - Refused
+    - Missing
+    - Not asked
+  label: Ethnic group’s political influence
+  description: >
+    Think about the condition of ____________ [R’s Ethnic Group]. Do they have less, the same, or more influence in politics than other groups in this country?
+  variables:
+    r3: q80b
+    r4: q81
+    r5: null
+    r6: null
+
 # languages_spoken:
 #   type: string
-#   lower: true
+#   preprocess:
+#     lower: true
 #   description: >
 #     What languages do you speak well (verbatim)
 #   variables:
@@ -1575,87 +1656,92 @@ trust_religious_leaders:
 #     r4: q88e
 #     r5: null
 #     r6: null
-#
-# languages_number:
-#   type: integer
-#   label: Number of languages
-#   missing:
-#     - Don't know
-#     - Refused
-#     - Missing
-#   description: >
-#     What languages do you speak well?
-#   variables:
-#     r3: null
-#     r4: q88f
-#     r5: null
-#     r6: null
-#
-# others_present:
-#   type: string
-#   label: Others present
-#   mappings:
-#     Spouse: Spouse only
-#     Children Only: Children only
-#   constraints:
-#     enum:
-#     - No one
-#     - Spouse only
-#     - Children only
-#     - A few others
-#     - Small crowd
-#   missing:
-#     - Missing Data
-#   variables:
-#     r3: q104
-#     r4: q104
-#     r5: q106
-#     r6: q106
-#
-# house_water_source:
-#   type: string
-#   label: Source of water for household use
-#   description: >
-#     Please tell me whether each of the following are available inside your house, inside your compound, or outside your compound: your main source of water for household use?
-#   constraints:
-#     ordered: true
-#     enum:
-#     - Inside the house
-#     - Inside the compound
-#     - Outside the compound
-#   missing:
-#     - Missing
-#     - Refused
-#     - Don't know
-#   variables:
-#     r3: null
-#     r4: q93a
-#     r5: q95a
-#     r6: q93a
-#
-# house_toilet:
-#   type: string
-#   label: Location of toilet or latrine
-#   description: >
-#     Please tell me whether each of the following are available inside your house, inside your compound, or outside your compound: A toilet or latrine
-#   mappings:
-#     No latrine: None, no latrine available
-#   constraints:
-#     enum:
-#     - None, no latrine available
-#     - Inside the house
-#     - Inside the compound
-#     - Outside the compound
-#   missing:
-#     - Missing
-#     - Refused
-#     - Don't know
-#   variables:
-#     r3: null
-#     r4: null
-#     r5: q95b
-#     r6: q93b
-#
+
+languages_number:
+  type: factor
+  label: Number of languages
+  factor:
+    levels: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"]
+    ordered: true
+    missing:
+    - Don't know
+    - Refused
+    - Missing
+  description: >
+    What number of languages do you speak well?
+  variables:
+    r3: null
+    r4: q88f
+    r5: null
+    r6: null
+
+others_present:
+  type: factor
+  label: Others present
+  preprocess:
+    mappings:
+      Spouse: Spouse only
+      Children Only: Children only
+  factor:
+    levels:
+    - No one
+    - Spouse only
+    - Children only
+    - A few others
+    - Small crowd
+    missing:
+    - Missing
+  variables:
+    r3: q104
+    r4: q104
+    r5: q106
+    r6: q106
+
+house_water_source:
+  type: string
+  label: Source of water for household use
+  description: >
+    Please tell me whether each of the following are available inside your house, inside your compound, or outside your compound: your main source of water for household use?
+  factor:
+    ordered: true
+    levels:
+    - Inside the house
+    - Inside the compound
+    - Outside the compound
+    missing:
+      - Missing
+      - Refused
+      - Don't know
+  variables:
+    r3: null
+    r4: q93a
+    r5: q95a
+    r6: q93a
+
+house_toilet:
+  type: factor
+  label: Location of toilet or latrine
+  description: >
+    Please tell me whether each of the following are available inside your house, inside your compound, or outside your compound: A toilet or latrine
+  preprocess:
+    mappings:
+      "No latrine": "None, no latrine available"
+  factor:
+    levels:
+    - None, no latrine available
+    - Outside the compound
+    - Inside the compound
+    - Inside the house
+    missing:
+    - Missing
+    - Refused
+    - Don't know
+  variables:
+    r3: null
+    r4: null
+    r5: q95b
+    r6: q93b
+
 #
 # religion_cond:
 #   type: string

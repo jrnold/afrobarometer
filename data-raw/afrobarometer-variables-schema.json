@@ -32,7 +32,8 @@
             "type": "string",
             "enum": ["lower", "upper", "title"],
             "comment": "Convert output strings to lower-case, upper-case, or title-case."
-          }
+          },
+          "comment": "Settings that determine actions that affect the preprocessing of a variable."
         },
         "label": {"type": "string"},
         "description": {"type": "string"}

@@ -150,8 +150,8 @@ clean_variable <- function(x, config) {
     is_ordered <- config[["factor"]][["ordered"]] %||% FALSE
     bad_values <- base::setdiff(unique(x), all_lvls)
     if (length(bad_values)) {
-      warning("Bad values observed: ",
-              str_c("'", bad_values, "'", collapse = ", "))
+      cat("Bad values observed: ",
+          str_c("'", bad_values, "'", collapse = ", "), "\n")
     }
     x <- factor(x, levels = all_lvls)
     if (length(missing_values)) {
@@ -216,7 +216,8 @@ postprocess_funs <- list(
   }
 )
 
-OTHERVARS <- c("lpi", "age_int", "age_cond")
+# need to note any variables created by the postprocess fxn in order to save them.
+OTHERVARS <- c("lpi", "age_int", "age_cond", "educ_cond")
 
 clean_afrobarometer <- function(.round) {
   cat(glue("Processing round {.round}."), '\n')
@@ -254,4 +255,3 @@ afrob <- map_df(AFROBAROMETER_ROUNDS, clean_afrobarometer) %>%
   select(round, respno, country, everything())
 
 write_rds(afrob, OUTFILE)
-
