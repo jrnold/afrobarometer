@@ -418,7 +418,7 @@ religion:
         - Methodist
         - Presbyterian
         - Baptist
-        - Quaker / Friends
+        - Quaker/Friends
         - Mennonite
         - Dutch Reformed
         - Calvinist
@@ -1742,149 +1742,149 @@ house_toilet:
     r5: q95b
     r6: q93b
 
-#
-# religion_cond:
-#   type: string
-#   description: Respondent's religion (binned)
-#   comment: >
-#     This is similar to the `RELIG_COND` variable in round 6, but applied to
-#     all rounds. The `RELIG_COND` is also not consistent within defitions.
-#   mappings:
-#     African Abraham: Christian
-#     African Abraham Church: Christian
-#     African Apostolic Faith: Christian
-#     African Independent Church: Christian
-#     African Inland Church: Christian
-#     African International: Christian
-#     Agnostic: None
-#     Agnostic (Do not know if there is a God): None
-#     Agnostic(Do not know if there is a God): None
-#     Alliance Chretienne et Missionnaire: Christian
-#     Anglican: Christian
-#     Ansardine Brotherhood: Muslim
-#     Apostolic: Christian
-#     Apostolic Church: Christian
-#     Apostolic Faith/New_United: Christian
-#     Assemblies of God: Christian
-#     Assembly of God: Christian
-#     Atheist: None
-#     Atheist (Do not believe in a God): None
-#     Atheist(Do not believe in a God): None
-#     Bahai: Other
-#     Baptist: Christian
-#     Bashariya Mission: Muslim
-#     Bible Believers: Christian
-#     Brethren in Christ: Christian
-#     Buddhist: Other
-#     Calvinist: Christian
-#     Calviniste (FJKM): Christian
-#     Catholic: Christian
-#     Celestial Christianity: Christian
-#     Christian (general/other): Christian
-#     Christian Missions in Many Lands: Christian
-#     Christian only: Christian
-#     Christian Rationalism: Christian
-#     Christianisme Celeste: Christian
-#     Church of Christ: Christian
-#     CMA: Christian
-#     CMML: Christian
-#     Confr Arie de la Hamadiya (Hamalite): Muslim
-#     Confr Arie de la Trabiya: Muslim
-#     Confr Arie de la Wahhabiya (Wahhabite): Muslim
-#     Confr Arie des Lay anes(brotherhood): Muslim
-#     Confrerie de la Hamadiya (Hamalite): Muslim
-#     Confrerie de la Trabiya: Muslim
-#     Coptic: Christian
-#     Covenant Church: Christian
-#     Dutch Reform: Christian
-#     Dutch Reformed: Christian
-#     Dutch Reformed (e.g. NGK,NHK,GK,Mission,APK,URC): Christian
-#     Don't know: null
-#     Emmanuel: Christian
-#     Evangelical: Christian
-#     Faith Apostolic: Christian
-#     Hamalite / Chérif de Nioro Brotherhood: Muslim
-#     Harriste: Christian
-#     Hindu: Other
-#     Hisbulah Mission: Muslim
-#     Ibadi: Muslim
-#     Independent: Christian
-#     IPCC: Christian
-#     Ismaeli: Muslim
-#     Izala: Muslim
-#     Jehovah's Witness: Christian
-#     Jewish: Other
-#     Johanne Masowe: Other
-#     Last Church: Christian
-#     Last Church of God: Christian
-#     Last Church/Reform: Christian
-#     Layene: Muslim
-#     Lutheran: Christian
-#     Marathi: Other
-#     Mennonite: Christian
-#     Methodist: Christian
-#     Mormon: Christian
-#     Mouridiya Brotherhood: Muslim
-#     Muslim (general/other): Muslim
-#     Muslim khadre: Muslim
-#     Muslim Layène: Muslim
-#     Muslim Mouride: Muslim
-#     Muslim only: Muslim
-#     Muslim Tijane: Muslim
-#     Muslim, Shiite: Muslim
-#     Muslim, Sunni: Muslim
-#     Nationality: Nationality
-#     Nazaren: Christian
-#     Nazaren Church: Christian
-#     Nazareth Church: Christian
-#     New Apostolic Church: Christian
-#     NG Kerk: Christian
-#     None: None
-#     NOT ASKED IN THIS COUNTRY: null
-#     Old Apostolic: Christian
-#     Orthodox: Christian
-#     Other: Other
-#     Other Christian (Moravian): Christian
-#     Pentecostal: Christian
-#     Presbyterian: Christian
-#     Protestant (Evangelical/Pentecostal): Christian
-#     Protestant (Mainstream): Christian
-#     Qadiriya Brotherhood: Muslim
-#     Quaker/Friends: Christian
-#     Reformed Church in Zimbabwe: Christian
-#     Rhema: Christian
-#     Roman Catholic: Christian
-#     Salvation Army: Christian
-#     Seventh Day Adventist: Christian
-#     Shia: Muslim
-#     Shia only: Muslim
-#     Sidya: Muslim
-#     St John Apostolic: Christian
-#     Sukuti: Muslim
-#     Sunni only: Muslim
-#     Tamil: Other
-#     Telegu: Other
-#     Tijaniya Brotherhood: Muslim
-#     Toby Betela: Other
-#     Topia: Christian
-#     Traditional religion: Other
-#     Traditional/ethnic religion: Other
-#     Twelve Apostles: Christian
-#     UCCSA: Christian
-#     United Church: Christian
-#     United Church of Zambia: Christian
-#     United Church of Zamia: Christian
-#     Utopia Church: Christian
-#     Vahao ny Oloko: Christian
-#     Voice of unity/unity of christ/faith of unity: Christian
-#     Wahhabiya Brotherhood: Muslim
-#     Zaoga: Christian
-#     ZCC: Christian
-#     Zion: Christian
-#     Zionist Christian Church: Christian
-#   variables:
-#     r6: Q98A
-#     r5: Q98A
-#     r4: Q90
-#     r3: Q91
-#     r2: Q85
+
+religion_cond:
+  type: string
+  description: Respondent's religion (binned)
+  comment: >
+    This is similar to the `RELIG_COND` variable in round 6, but applied to
+    all rounds. The `RELIG_COND` is also not consistent within defitions.
+  preprocess:
+    mappings:
+      African Abraham: Christian
+      African Abraham Church: Christian
+      African Apostolic Faith: Christian
+      African Independent Church: Christian
+      African Inland Church: Christian
+      African International: Christian
+      Agnostic: Other
+      Agnostic (Do not know if there is a God): Other
+      Agnostic(Do not know if there is a God): Other
+      Alliance Chretienne et Missionnaire: Christian
+      Anglican: Christian
+      Ansardine Brotherhood: Muslim
+      Apostolic: Christian
+      Apostolic Church: Christian
+      Apostolic Faith/New_United: Christian
+      Assemblies of God: Christian
+      Assembly of God: Christian
+      Atheist: Other
+      Atheist (Do not believe in a God): Other
+      Atheist(Do not believe in a God): Other
+      Bahai: Other
+      Baptist: Christian
+      Bashariya Mission: Muslim
+      Bible Believers: Christian
+      Brethren in Christ: Christian
+      Buddhist: Other
+      Calvinist: Christian
+      Calviniste (FJKM): Christian
+      Catholic: Christian
+      Celestial Christianity: Christian
+      Christian (general/other): Christian
+      Christian Missions in Many Lands: Christian
+      Christian only: Christian
+      Christian Rationalism: Christian
+      Christianisme Celeste: Christian
+      Church of Christ: Christian
+      CMA: Christian
+      CMML: Christian
+      Confr Arie de la Hamadiya (Hamalite): Muslim
+      Confr Arie de la Trabiya: Muslim
+      Confr Arie de la Wahhabiya (Wahhabite): Muslim
+      Confr Arie des Lay anes(brotherhood): Muslim
+      Confrerie de la Hamadiya (Hamalite): Muslim
+      Confrerie de la Trabiya: Muslim
+      Coptic: Christian
+      Covenant Church: Christian
+      Dutch Reform: Christian
+      Dutch Reformed: Christian
+      Dutch Reformed (e.g. NGK,NHK,GK,Mission,APK,URC): Christian
+      Emmanuel: Christian
+      Evangelical: Christian
+      Faith Apostolic: Christian
+      Hamalite / Chérif de Nioro Brotherhood: Muslim
+      Harriste: Christian
+      Hindu: Other
+      Hisbulah Mission: Muslim
+      Ibadi: Muslim
+      Independent: Christian
+      IPCC: Christian
+      Ismaeli: Muslim
+      Izala: Muslim
+      Jehovah's Witness: Christian
+      Jewish: Other
+      Johanne Masowe: Other
+      Last Church: Christian
+      Last Church of God: Christian
+      Last Church/Reform: Christian
+      Layene: Muslim
+      Lutheran: Christian
+      Marathi: Other
+      Mennonite: Christian
+      Methodist: Christian
+      Mormon: Christian
+      Mouridiya Brotherhood: Muslim
+      Muslim (general/other): Muslim
+      Muslim khadre: Muslim
+      Muslim Layène: Muslim
+      Muslim Mouride: Muslim
+      Muslim only: Muslim
+      Muslim Tijane: Muslim
+      Muslim, Shiite: Muslim
+      Muslim, Sunni: Muslim
+      Nationality: Nationality
+      Nazaren: Christian
+      Nazaren Church: Christian
+      Nazareth Church: Christian
+      New Apostolic Church: Christian
+      NG Kerk: Christian
+      None: None
+      NOT ASKED IN THIS COUNTRY: Missing
+      Old Apostolic: Christian
+      Orthodox: Christian
+      Other: Other
+      Other Christian (Moravian): Christian
+      Pentecostal: Christian
+      Presbyterian: Christian
+      Protestant (Evangelical/Pentecostal): Christian
+      Protestant (Mainstream): Christian
+      Qadiriya Brotherhood: Muslim
+      Quaker/Friends: Christian
+      Reformed Church in Zimbabwe: Christian
+      Rhema: Christian
+      Roman Catholic: Christian
+      Salvation Army: Christian
+      Seventh Day Adventist: Christian
+      Shia: Muslim
+      Shia only: Muslim
+      Sidya: Muslim
+      St John Apostolic: Christian
+      Sukuti: Muslim
+      Sunni only: Muslim
+      Tamil: Other
+      Telegu: Other
+      Tijaniya Brotherhood: Muslim
+      Toby Betela: Other
+      Topia: Christian
+      Traditional religion: Other
+      Traditional/ethnic religion: Other
+      Twelve Apostles: Christian
+      UCCSA: Christian
+      United Church: Christian
+      United Church of Zambia: Christian
+      United Church of Zamia: Christian
+      Utopia Church: Christian
+      Vahao ny Oloko: Christian
+      Voice of unity/unity of christ/faith of unity: Christian
+      Wahhabiya Brotherhood: Muslim
+      Zaoga: Christian
+      ZCC: Christian
+      Zion: Christian
+      Zionist Christian Church: Christian
+  variables:
+    r6: Q98A
+    r5: Q98A
+    r4: Q90
+    r3: Q91
+    r2: Q85
